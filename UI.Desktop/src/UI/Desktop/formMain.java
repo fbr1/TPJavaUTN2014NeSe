@@ -78,6 +78,7 @@ public class formMain {
 		table.setFillsViewportHeight(true);
 		table.setColumnSelectionAllowed(false);
 		table.setSelectionMode( javax.swing.ListSelectionModel.SINGLE_SELECTION);
+		table.getTableHeader().setReorderingAllowed(false) ;
 		table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
 	        public void valueChanged(ListSelectionEvent event) {
 	        }
