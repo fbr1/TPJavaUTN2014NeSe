@@ -111,6 +111,14 @@ public class formMain {
         });
 		mnArchivo.add(mntmModificar);
 		
+		JMenuItem mntmEliminar = new JMenuItem("Eliminar");
+		mntmEliminar.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent arg0) {
+        		Eliminar();
+        	}
+        });
+		mnArchivo.add(mntmEliminar);
+		
 		JMenu mnAyuda = new JMenu("Ayuda");
 		menuBar.add(mnAyuda);
 	}
@@ -181,6 +189,22 @@ public class formMain {
         		form.dispose();
             }
         });
+	}
+	
+	private void Eliminar(){
+		try {
+			ElectroDomesticoLogic electroDomesticoNegocio = new ElectroDomesticoLogic();
+			if(electroDomesticoNegocio.getOne((int)table.getValueAt(table.getSelectedRow(), 1)) instanceof Television){
+				new TelevisionLogic().delete((int)table.getValueAt(table.getSelectedRow(), 1));
+			}else{
+				new LavarropasLogic().delete((int)table.getValueAt(table.getSelectedRow(), 1));
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		UpdateTable();
 	}
 	
 	private void UpdateTable(){
