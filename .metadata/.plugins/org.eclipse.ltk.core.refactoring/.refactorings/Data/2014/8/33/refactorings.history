@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename compilation unit &apos;Data.TelevisorAdapter.java&apos; to &apos;TelevisionAdapter.java&apos;&#x0D;&#x0A;- Original project: &apos;Data&apos;&#x0D;&#x0A;- Original element: &apos;Data.TelevisorAdapter.java&apos;&#x0D;&#x0A;- Renamed element: &apos;Data.TelevisionAdapter.java&apos;" description="Rename compilation unit &apos;TelevisorAdapter.java&apos;" flags="2" id="org.eclipse.jdt.ui.rename.compilationunit" input="/src&lt;Data{TelevisorAdapter.java" name="TelevisionAdapter.java" references="false" stamp="1408319148586" version="1.0"/>
+</session>

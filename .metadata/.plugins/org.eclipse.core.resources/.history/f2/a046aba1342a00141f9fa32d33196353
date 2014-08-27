@@ -1,0 +1,183 @@
+package UI.Desktop;
+
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+
+import javax.swing.JFrame;
+import javax.swing.JTable;
+import javax.swing.JScrollPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
+
+
+
+
+public class TableWithModel extends JFrame{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JTable table;
+	private TableModel model;
+
+	/**
+	 * Launch the application.
+	 */
+	/*public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					ElectroDomesticoLogic electroDomesticoNegocio = new ElectroDomesticoLogic();					
+					TableWithModel frame = new TableWithModel(electroDomesticoNegocio.getAll());
+					frame.setVisible(true);	
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}*/
+
+	/**
+	 public TableWithModel(Object[][] obj, String[] header)
+	 */
+	public TableWithModel(ArrayList<Object[]> data) {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 450, 300);
+		this.setOpacity(1);
+		//contentPane = new JPanel()
+		//contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		//contentPane.setLayout(new BorderLayout(0, 0));
+		//setContentPane(contentPane);
+		model = new TableModel(data);
+		table = new JTable(model);
+		table.setCellSelectionEnabled(true);
+		table.setFillsViewportHeight(true);
+		table.setColumnSelectionAllowed(false);
+		table.setSelectionMode( javax.swing.ListSelectionModel.SINGLE_SELECTION);
+		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if(!((boolean)table.getValueAt(e.getFirstIndex(),0))){
+					TableModel model = (TableModel) table.getModel();
+					int rowSelected = model.getRowSelected();
+					table.setRowSelectionInterval(rowSelected, rowSelected);
+				}
+			}			
+		});
+		table.getModel().addTableModelListener(new TableModelListener() {
+
+	            @Override
+	            public void tableChanged(TableModelEvent e) {
+	                if(e.getColumn() == 0 && e.getFirstRow()>-1){
+	                	TableModel model = (TableModel) table.getModel();
+	                	System.out.println("CheckBox de fila " + e.getFirstRow() + " seleccionado");
+	                	int rowSelected = model.getRowSelected();
+	                	table.setRowSelectionInterval(rowSelected, rowSelected);
+	                	model.clearChecks(e.getFirstRow());
+	                }
+	            }
+	    });
+		getContentPane().add(new JScrollPane(table), BorderLayout.CENTER);
+
+	}
+	
+	public void UpdateTable(ArrayList<Object[]> obj){
+		((TableModel) this.table.getModel()).reload(obj);
+	}
+	
+}
+
+
+
+//class 
+
+class TableModel extends AbstractTableModel{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	ArrayList<Object[]> data;		
+	String[] columnNames = {"","ID","Descripcion", "Color",
+			"Consumo Energetico", "Peso",
+			"Precio Base", "Carga", "Resolucion", "TDT", "Precio Final"};
+	private int rowSelected;
+	
+	public TableModel(ArrayList<Object[]> data){
+		this.data = data;
+	}
+	public int getColumnCount() {
+		return columnNames.length;
+	}
+
+	public int getRowCount() {
+		return data.size();
+	}
+
+	public Object getValueAt(int rowIndex, int columnIndex) {
+		return data.get(rowIndex)[columnIndex];
+	}
+	
+    public void setValueAt(Object value, int row, int col) {
+        data.get(row)[col] = value;
+        fireTableCellUpdated(row, col);
+    }
+	public String getColumnName(int index){
+		return columnNames[index];
+	}	
+
+	public Class<?> getColumnClass(int columnIndex) {
+	    if (columnIndex == 9)
+	        return Boolean.class;
+	    if ( columnIndex == 0)
+	    	return Boolean.class;
+	    return super.getColumnClass(columnIndex);
+	}
+	
+    public boolean isCellEditable(int row, int col) {
+        if (col == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public void clearChecks(int row){
+    	for(int i = 0;i<this.getRowCount();i++ ){
+    		if(i!=row){
+    			data.get(i)[0] = false;
+    		}
+    	}
+    	this.setRowSelected(row);
+        fireTableRowsUpdated(0, this.getRowCount());
+    }
+    public int getRowSelected(){
+    	return this.rowSelected;
+    }
+    public void setRowSelected(int row){
+    	this.rowSelected = row;
+    }
+    
+    public void add(Object[] obj) {
+        data.add(obj);
+        fireTableRowsInserted(getRowCount(), getRowCount());
+    }
+
+    public void remove(Object[] obj) {
+        if (data.contains(obj)) {
+            int index = data.indexOf(obj);
+            data.remove(obj);
+            this.fireTableRowsDeleted(index, index);
+        }
+    }
+    
+    public void reload(ArrayList<Object[]> obj){
+    	data.clear();
+    	columnNames = null;
+    }
+}
