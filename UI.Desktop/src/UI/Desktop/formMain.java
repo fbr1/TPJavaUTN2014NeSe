@@ -14,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
@@ -194,17 +195,21 @@ public class formMain {
         });
 	}
 	private void Modificar(){
-		formElectrodomestico form = new formElectrodomestico(new ElectroDomesticoLogic().getOne((int)table.getValueAt(table.getSelectedRow(), 1)));
-		form.setVisible(true);
-		form.addWindowListener(new WindowAdapter() {
-            public void windowClosed(WindowEvent ev) {                
-                
-        		if(form.getResultado() == formElectrodomestico.resultado.Completado){
-        			UpdateTable();
-        		}
-        		form.dispose();
-            }
-        });
+		if(table.getSelectedRow()==-1){
+			JOptionPane.showMessageDialog(null, "Seleccione un electrodomestico a modificar", "Error al modificar", JOptionPane.ERROR_MESSAGE);
+		}else{
+			formElectrodomestico form = new formElectrodomestico(new ElectroDomesticoLogic().getOne((int)table.getValueAt(table.getSelectedRow(), 1)));
+			form.setVisible(true);
+			form.addWindowListener(new WindowAdapter() {
+	            public void windowClosed(WindowEvent ev) {                
+	                
+	        		if(form.getResultado() == formElectrodomestico.resultado.Completado){
+	        			UpdateTable();
+	        		}
+	        		form.dispose();
+	            }
+	        });
+		}
 	}
 	
 	private void Eliminar(){

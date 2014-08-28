@@ -28,8 +28,7 @@ public class formFiltro extends defaultJFrame {
 	private JLabel lblConsumoEnergetico;
 	private JComboBox cbbConsumoEnergetico;
 	
-	
-	public formFiltro(formMain formMain){
+	public formFiltro(formMain formMain){		
 		setResizable(false);
 		setTitle("Filtrado de datos");
 		setBounds(100, 100, 398, 128);			
