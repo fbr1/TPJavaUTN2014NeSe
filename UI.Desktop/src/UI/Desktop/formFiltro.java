@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 
 import java.awt.BorderLayout;
+import java.util.ArrayList;
 
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -13,7 +14,10 @@ import javax.swing.JComboBox;
 import javax.swing.JCheckBox;
 import javax.swing.JButton;
 
-public class formFiltro extends defaultJFrame {
+import Business.ElectroDomesticoLogic;
+import Entities.ElectroDomestico;
+
+public class formFiltro extends defaultDialog {
 	
 	/**
 	 * 
@@ -27,8 +31,10 @@ public class formFiltro extends defaultJFrame {
 	private JLabel lblPrecioMaximo;
 	private JLabel lblConsumoEnergetico;
 	private JComboBox cbbConsumoEnergetico;
+	private JButton btnAplicar;
+	private JButton btnAceptar;
 	
-	public formFiltro(formMain formMain){		
+	public formFiltro(){		
 		setResizable(false);
 		setTitle("Filtrado de datos");
 		setBounds(100, 100, 398, 128);			
@@ -93,7 +99,7 @@ public class formFiltro extends defaultJFrame {
 		});
 		panel.add(chckbxConsumo);
 		
-		JButton btnAceptar = new JButton("Aceptar");
+		btnAceptar = new JButton("Aceptar");
 		btnAceptar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Aceptar();
@@ -111,12 +117,7 @@ public class formFiltro extends defaultJFrame {
 		btnCancelar.setBounds(207, 72, 89, 23);
 		panel.add(btnCancelar);
 		
-		JButton btnAplicar = new JButton("Aplicar");
-		btnAplicar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {				
-				Aplicar();
-			}
-		});
+		btnAplicar = new JButton("Aplicar");
 		btnAplicar.setBounds(298, 72, 89, 23);
 		panel.add(btnAplicar);	
 		
@@ -139,14 +140,41 @@ public class formFiltro extends defaultJFrame {
 	}
 	
 	private void Aceptar(){
-		
+		this.setResultado(resultado.Completado);
+		this.dispose();
 	}
 	private void Cancelar(){
 		this.setResultado(resultado.Cancelado);
 		this.dispose();
 	}
-	private void Aplicar(){
-		
+	public ArrayList<ElectroDomestico> Aplicar(){
+		ElectroDomesticoLogic electroDomesticoNegocio = new ElectroDomesticoLogic();
+		ArrayList<ElectroDomestico> electroDomesticos = null;
+		if(this.chckbxPrecio.isSelected()){
+			try {
+				Double precio_min = Double.parseDouble(txtPrecioMin.getText());
+				Double precio_max = Double.parseDouble(txtPrecioMax.getText());
+				if(this.chckbxConsumo.isSelected()){
+					if(!(this.cbbConsumoEnergetico.getSelectedIndex() == 0)){
+						electroDomesticos = electroDomesticoNegocio.getTodos(precio_min,precio_max, this.cbbConsumoEnergetico.getSelectedItem().toString().charAt(0));	
+					} // TODO add alert message
+				}else{
+					electroDomesticos = electroDomesticoNegocio.getTodos(precio_min,precio_max);
+				}
+			} catch (NumberFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}else if(this.chckbxConsumo.isSelected()){
+			if(!(this.cbbConsumoEnergetico.getSelectedIndex() == 0)){
+				electroDomesticos = electroDomesticoNegocio.getTodos(this.cbbConsumoEnergetico.getSelectedItem().toString().charAt(0));	
+			} // TODO add alert message
+		}
+		return electroDomesticos;		
+	}
+	public void addApplyListener(ActionListener listener) {
+		btnAplicar.addActionListener(listener);
+		btnAceptar.addActionListener(listener);
 	}
 
 }

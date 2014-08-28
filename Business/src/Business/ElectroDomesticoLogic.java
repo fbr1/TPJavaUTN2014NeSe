@@ -51,7 +51,7 @@ public class ElectroDomesticoLogic extends BusinessLogic{
 	{
 		ArrayList<ElectroDomestico> electrodomesticos = new ArrayList<ElectroDomestico>();
 		electrodomesticos.addAll(this.getTodos(precio_min,precio_max));
-		electrodomesticos.addAll(this.getTodos(consumo));
+		electrodomesticos.retainAll(this.getTodos(consumo));
 		return electrodomesticos;
 	}
 	

@@ -128,6 +128,15 @@ public class formMain {
         });
 		mnArchivo.add(mntmFiltrar);
 		
+		JMenuItem mntmListar = new JMenuItem("Listar");		
+		mntmListar.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent arg0) {
+        		UpdateTable();
+        	}
+        });
+		mnArchivo.add(mntmListar);
+		
+		
 		
 		JMenu mnAyuda = new JMenu("Ayuda");
 		menuBar.add(mnAyuda);
@@ -229,7 +238,13 @@ public class formMain {
 	}
 	
 	private void Filtrar(){
-		formFiltro formfiltro = new formFiltro(this);
+		formFiltro formfiltro = new formFiltro();
+		formfiltro.addApplyListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				UpdateTable(formfiltro.Aplicar());
+			}			
+		});
 		formfiltro.setVisible(true);
 	}
 	
