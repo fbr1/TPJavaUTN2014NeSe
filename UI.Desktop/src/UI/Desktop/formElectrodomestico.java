@@ -287,7 +287,7 @@ public class formElectrodomestico extends defaultJFrame implements ItemListener 
 	private void Aceptar(String tipo) throws Exception{		
 		if(tipo.equalsIgnoreCase("Lavarropas")){
 				LavarropasLogic lavarropasLogic = new LavarropasLogic();
-				Lavarropas lavarropa = new Lavarropas(Double.parseDouble(txtPrecioBase.getText()), Double.parseDouble(txtPeso.getText()), 
+				Lavarropas lavarropa = new Lavarropas(txtDescripcion.getText(), Double.parseDouble(txtPrecioBase.getText()), Double.parseDouble(txtPeso.getText()), 
 														 Character.valueOf(cbbConsumo.getSelectedItem().toString().charAt(0)),
 														 (String)cbbColor.getSelectedItem(), Double.parseDouble(txtCarga.getText()));
 				if (this.getTipoOperacion() == formMain.TipoOperacion.alta){
@@ -302,7 +302,7 @@ public class formElectrodomestico extends defaultJFrame implements ItemListener 
 		} else if(tipo.equalsIgnoreCase("Television")){
 				
 				TelevisionLogic televisionLogic = new TelevisionLogic();
-				Television television = new Television(Double.parseDouble(txtPrecioBase.getText()), Double.parseDouble(txtPeso.getText()), 
+				Television television = new Television(txtDescripcion.getText(), Double.parseDouble(txtPrecioBase.getText()), Double.parseDouble(txtPeso.getText()), 
 														Character.valueOf(cbbConsumo.getSelectedItem().toString().charAt(0)),
 														(String)cbbColor.getSelectedItem(), Double.parseDouble(txtResolucion.getText()),
 														ckbSintonizador.isSelected());

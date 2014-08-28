@@ -42,10 +42,10 @@ public class Television extends ElectroDomestico{
 		this.setSinTDT(Television.defaultSinTDT);
 	}
 	//*Television(double precio, double peso, char consumoEnergetico, String color, double resolucion, boolean sinTDT) /
-	public Television(double precio, double peso, char consumoEnergetico,
+	public Television(String descripcion,double precio, double peso, char consumoEnergetico,
 			String color, double resolucion, boolean sinTDT) 
 	{
-		super(precio, peso, consumoEnergetico, color); 
+		super(descripcion, precio, peso, consumoEnergetico, color); 
 		this.setResolucion(resolucion);
 		this.setSinTDT(sinTDT);		
 	}

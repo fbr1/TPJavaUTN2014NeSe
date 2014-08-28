@@ -47,15 +47,16 @@ public class ElectroDomestico extends Entity {
 	public String getDescripcion(){
 		return this.descripcion;
 	}
-	/** ElectroDomestico(double precioBase, double peso, char idConsumoEnergetico, String color) */
+	/** ElectroDomestico(String descripcion, double precioBase, double peso, char idConsumoEnergetico, String color) */
 	public ElectroDomestico(){
 		super();
+		this.setDescripcion("");
 		this.setPrecio_base(ElectroDomestico.defaultPrecio);
 		this.setColor(ElectroDomestico.defaultColor);
 		this.setConsumoEnergetico(ElectroDomestico.defaultConsumo);
 		this.setPeso(ElectroDomestico.defaultPeso);
 	}
-	/** ElectroDomestico(double precioBase, double peso, char idConsumoEnergetico, String color) */
+	/** ElectroDomestico(String descripcion, double precioBase, double peso, char idConsumoEnergetico, String color) */
 	public ElectroDomestico(double precio,double peso){
 		super();
 		this.setPrecio_base(precio);
@@ -63,21 +64,16 @@ public class ElectroDomestico extends Entity {
 		this.setConsumoEnergetico(ElectroDomestico.defaultConsumo);
 		this.setColor(ElectroDomestico.defaultColor);
 	}
-	/** ElectroDomestico(double precioBase, double peso, char idConsumoEnergetico, String color) */
-	public ElectroDomestico(double precio, double peso, char consumoEnergetico, String color)
+	/** ElectroDomestico(String descripcion, double precioBase, double peso, char idConsumoEnergetico, String color) */
+	public ElectroDomestico(String descripcion,double precio, double peso, char consumoEnergetico, String color)
 	{
 		super();
+		this.setDescripcion(descripcion);
 		this.setPrecio_base(precio);
 		this.setPeso(peso);
 		this.setConsumoEnergetico(consumoEnergetico);
 		this.setColor(color);
 		
-	}
-	//@Override
-	//public int compareTo(ElectroDomestico elecDom) {
-	//	return this.getDescripcion().compareToIgnoreCase(elecDom.getDescripcion());
-	//}	
-
-	
+	}	
 	
 }
