@@ -1,7 +1,6 @@
 package UI.Desktop;
 
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 
 public class defaultDialog extends JDialog{
 	

@@ -4,16 +4,18 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.EventQueue;
+import java.awt.GraphicsEnvironment;
+import java.awt.Point;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 
@@ -90,10 +92,15 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
 	}
 	// Constructor Form de creacion
 	public formElectrodomestico() {
+		setModal(true);
 		setResizable(false);
 		setTitle("Nuevo Electrodomestico");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 312, 284);		
+	    Point center = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
+	    int windowWidth = 312;
+	    int windowHeight = 284;
+	    setBounds(center.x - windowWidth / 2, center.y - windowHeight / 2, windowWidth,
+	        windowHeight);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -135,6 +142,13 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
         cbNuevoElectroDomestico.setBounds(152, 11, 122, 20);
         cbNuevoElectroDomestico.setEditable(false);
         cbNuevoElectroDomestico.addItemListener(this);    	
+        cbNuevoElectroDomestico.addActionListener (new ActionListener () {
+            public void actionPerformed(ActionEvent e) {
+                txtCarga.setText("");
+                txtResolucion.setText("");
+                ckbSintonizador.setSelected(false);
+            }
+        });
         electroDomesticoPanel.add(cbNuevoElectroDomestico);   
 		
 		// CardLayout inner panels
@@ -167,12 +181,7 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
         JButton btnAceptar = new JButton("Aceptar");
         btnAceptar.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent arg0) {
-        		try {
-					Aceptar((String)cbNuevoElectroDomestico.getSelectedItem());
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				Aceptar((String)cbNuevoElectroDomestico.getSelectedItem());
         	}
         });
         btnAceptar.setBounds(50, 5, 89, 23);
@@ -200,7 +209,7 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
 	private JPanel cargarElectroDomesticoPanel(JPanel electroDomesticoPanel){
 		
         electroDomesticoPanel.setBounds(10, 11, 284, 155);
-        electroDomesticoPanel.setLayout(null);   
+        electroDomesticoPanel.setLayout(null);           
         
         JLabel lblDescripcion = new JLabel("Descripcion:");
         lblDescripcion.setBounds(10, 39, 101, 14);
@@ -285,45 +294,77 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
 		cardTelevision.add(ckbSintonizador);
 	}
 	
-	private void Aceptar(String tipo) throws Exception{		
+	private void Aceptar(String tipo){		
 		if(tipo.equalsIgnoreCase("Lavarropas")){
-				LavarropasLogic lavarropasLogic = new LavarropasLogic();
-				Lavarropas lavarropa = new Lavarropas(txtDescripcion.getText(), Double.parseDouble(txtPrecioBase.getText()), Double.parseDouble(txtPeso.getText()), 
-														 Character.valueOf(cbbConsumo.getSelectedItem().toString().charAt(0)),
-														 (String)cbbColor.getSelectedItem(), Double.parseDouble(txtCarga.getText()));
-				if (this.getTipoOperacion() == formMain.TipoOperacion.alta){
-					lavarropa.setState(Entities.Entity.States.New);
-				}else{
-					lavarropa.setState(Entities.Entity.States.Modified);
+			if(!(areFieldsEmpty() || this.txtCarga.getText().isEmpty())){
+				if(validateinput()){
+					LavarropasLogic lavarropasLogic = new LavarropasLogic();
+					Lavarropas lavarropa = new Lavarropas(txtDescripcion.getText(), Double.parseDouble(txtPrecioBase.getText()), Double.parseDouble(txtPeso.getText()), 
+															 Character.valueOf(cbbConsumo.getSelectedItem().toString().charAt(0)),
+															 (String)cbbColor.getSelectedItem(), Double.parseDouble(txtCarga.getText()));
+					if (this.getTipoOperacion() == formMain.TipoOperacion.alta){
+						lavarropa.setState(Entities.Entity.States.New);
+					}else{
+						lavarropa.setState(Entities.Entity.States.Modified);
+					}
+					lavarropasLogic.save(lavarropa);	
+					this.setResultado(resultado.Completado);
+					this.dispose();
 				}
-				lavarropasLogic.save(lavarropa);	
-				this.setResultado(resultado.Completado);
-				this.dispose();
-		
+			}else{
+				JOptionPane.showMessageDialog(null, "Llene todos los campos", "Error", JOptionPane.ERROR_MESSAGE); 
+			}
 		} else if(tipo.equalsIgnoreCase("Television")){
-				
-				TelevisionLogic televisionLogic = new TelevisionLogic();
-				Television television = new Television(txtDescripcion.getText(), Double.parseDouble(txtPrecioBase.getText()), Double.parseDouble(txtPeso.getText()), 
-														Character.valueOf(cbbConsumo.getSelectedItem().toString().charAt(0)),
-														(String)cbbColor.getSelectedItem(), Double.parseDouble(txtResolucion.getText()),
-														ckbSintonizador.isSelected());
-				
-				if (this.getTipoOperacion() == formMain.TipoOperacion.alta){
-					television.setState(Entities.Entity.States.New);
-				}else{
-					television.setState(Entities.Entity.States.Modified);
+			if(!(areFieldsEmpty() || this.txtResolucion.getText().isEmpty())){	
+				if(validateinput()){
+					TelevisionLogic televisionLogic = new TelevisionLogic();
+					Television television = new Television(txtDescripcion.getText(), Double.parseDouble(txtPrecioBase.getText()), Double.parseDouble(txtPeso.getText()), 
+															Character.valueOf(cbbConsumo.getSelectedItem().toString().charAt(0)),
+															(String)cbbColor.getSelectedItem(), Double.parseDouble(txtResolucion.getText()),
+															ckbSintonizador.isSelected());
+					
+					if (this.getTipoOperacion() == formMain.TipoOperacion.alta){
+						television.setState(Entities.Entity.States.New);
+					}else{
+						television.setState(Entities.Entity.States.Modified);
+					}
+					televisionLogic.save(television);	
+					this.setResultado(resultado.Completado);
+					this.dispose();
 				}
-				televisionLogic.save(television);	
-				this.setResultado(resultado.Completado);
-				this.dispose();
+			}else{
+				JOptionPane.showMessageDialog(null, "Hay un error en el llenado de los campos", "Error", JOptionPane.ERROR_MESSAGE); 
+			}
 		}else{
-			this.setResultado(resultado.Error);
-			this.dispose();
-			throw new Exception("Elije un tipo de Electrodomestico");				
+			this.setResultado(resultado.Error);			
+			JOptionPane.showMessageDialog(null, "Elija un tipo de electrodomestico", "Error", JOptionPane.ERROR_MESSAGE); 			
+		}	
+	}		
+	private boolean areFieldsEmpty(){
+		boolean empty = false;
+		if(this.txtDescripcion.getText().isEmpty() || this.txtPeso.getText().isEmpty() || this.txtPrecioBase.getText().isEmpty()){
+			empty = true;
 		}
-		
-	}	
-
+		return empty;
+	}
+	private boolean validateinput(){
+	   try
+	   {	      
+	      Double.parseDouble(txtPeso.getText());
+	      Double.parseDouble(txtPrecioBase.getText());
+	      if(this.txtCarga.getText().isEmpty()){
+	    	  Double.parseDouble(txtResolucion.getText());
+	      }else{
+	    	  Double.parseDouble(txtCarga.getText());
+	      }
+	      return true;
+	   }
+	   catch( Exception e )
+	   {
+		  JOptionPane.showMessageDialog(null, "Se deben ingresar numeros reales", "Error", JOptionPane.ERROR_MESSAGE); 
+	      return false;
+	   }
+	}
 	
 	private void Cancelar(){		
 		this.setResultado(resultado.Cancelado);
@@ -333,19 +374,28 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
 	private void populateFields(ElectroDomestico elecDom) {
 		TextPrompt txtpDescripcion = new TextPrompt(elecDom.getDescripcion(), this.txtDescripcion);
 		txtpDescripcion.setForeground(Color.GRAY);
+		
 		TextPrompt txtpPrecioBase = new TextPrompt(String.valueOf(elecDom.getPrecio_base()), this.txtPrecioBase);
 		txtpPrecioBase.setForeground(Color.GRAY);
+		
 		TextPrompt txtpPeso = new TextPrompt(String.valueOf(elecDom.getPeso()), this.txtPeso);
 		txtpPeso.setForeground(Color.GRAY);
-		 
-		//this.cbbColor.setSelectedIndex(anIndex);  Falta implementar los combobox
+		
+		this.cbbColor.setSelectedItem(elecDom.getColor());
+		
+		this.cbbConsumo.setSelectedItem(Character.toString(elecDom.getConsumoEnergetico())); 
+		
 		if ( elecDom instanceof Television){
+			
 			this.ckbSintonizador.setSelected(((Television)elecDom).tieneSinTDT());
+			
 			TextPrompt txtpResolucion = new TextPrompt(String.valueOf(((Television)elecDom).getResolucion()), this.txtResolucion);
 			txtpResolucion.setForeground(Color.GRAY);
 		} else{
+			
 			TextPrompt txtpCarga = new TextPrompt(String.valueOf(((Lavarropas)elecDom).getCarga()), this.txtCarga);
 			txtpCarga.setForeground(Color.GRAY);
+			
 		}
 	}
 

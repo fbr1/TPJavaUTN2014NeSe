@@ -2,13 +2,14 @@ package UI.Desktop;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.GraphicsEnvironment;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -17,7 +18,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
+import UI.Desktop.defaultDialog.resultado;
 import Business.ElectroDomesticoLogic;
 import Business.LavarropasLogic;
 import Business.TelevisionLogic;
@@ -25,7 +29,7 @@ import Entities.ElectroDomestico;
 import Entities.Lavarropas;
 import Entities.Television;
 
-public class formMain {
+public class formMain{
 	
 	public enum TipoOperacion{alta,modificacion};
 	
@@ -67,9 +71,16 @@ public class formMain {
 		// Create frame
 		
 		frame = new JFrame();
-		frame.setBounds(100, 100, 691, 410);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setOpacity(1);
+		
+		// Set position & size
+		
+	    Point center = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
+	    int windowWidth = 691;
+	    int windowHeight = 410;
+	    frame.setBounds(center.x - windowWidth / 2, center.y - windowHeight / 2, windowWidth,
+	        windowHeight);
 		
 		// Create Model
 		
@@ -83,10 +94,30 @@ public class formMain {
 		table.setColumnSelectionAllowed(false);
 		table.setSelectionMode( javax.swing.ListSelectionModel.SINGLE_SELECTION);
 		table.getTableHeader().setReorderingAllowed(false) ;
-		
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+			public void valueChanged(ListSelectionEvent e) {									
+		    	if (e.getValueIsAdjusting()) {
+		    		if( table.getSelectedRow() != -1 && e.getFirstIndex() < table.getRowCount() && e.getLastIndex() < table.getRowCount()){
+		    			// Setea todo los checkbox a falso menos el seleccionado
+				    	int index = e.getFirstIndex();
+				    	TableModel model = (TableModel) table.getModel();
+				    	model.setValueAt(Boolean.FALSE, index, 0);
+				    	index = e.getLastIndex();
+				    	model.setValueAt(Boolean.FALSE, index, 0);		
+				    	// Si se selecciona una fila pero no en el checkbox, setea el checkbox a true
+				    	model.setValueAt(Boolean.TRUE, table.getSelectedRow() ,0);	    	
+			    	}
+			    	
+
+			    }
+		    	
+			}
+	    });
 		// Add table to frame
 		
 		frame.getContentPane().add(new JScrollPane(table), BorderLayout.CENTER);
+		
 		
 		// Other Controls
 	
@@ -140,6 +171,9 @@ public class formMain {
 		
 		JMenu mnAyuda = new JMenu("Ayuda");
 		menuBar.add(mnAyuda);
+		
+		JMenuItem mntmAcercaDe = new JMenuItem("Acerca de");
+		mnAyuda.add(mntmAcercaDe);
 	}
 	
 	private ArrayList<Object[]> generateTableInput(ArrayList<ElectroDomestico> elecDom){	
@@ -147,7 +181,7 @@ public class formMain {
 		/*
 		 * El Alternativo a esta linea en java 7 es Collections.sort(elecDom, new CustomComparator());
 		 */
-		Collections.sort(elecDom, Comparator.comparing(ElectroDomestico::getDescripcion)); 
+		Collections.sort(elecDom, (e1, e2) -> e1.getDescripcion().compareToIgnoreCase(e2.getDescripcion()));
 		
 		ArrayList<Object[]> data = new ArrayList<Object[]>();
 		for(ElectroDomestico la : elecDom){
@@ -194,8 +228,7 @@ public class formMain {
 		form.setTipoOperacion(formMain.TipoOperacion.alta);
 		form.setVisible(true);
 		form.addWindowListener(new WindowAdapter() {
-            public void windowClosed(WindowEvent ev) {                
-                
+            public void windowClosed(WindowEvent ev) {            
         		if(form.getResultado() == formElectrodomestico.resultado.Completado){
         			UpdateTable();
         		}
@@ -205,7 +238,7 @@ public class formMain {
 	}
 	private void Modificar(){
 		if(table.getSelectedRow()==-1){
-			JOptionPane.showMessageDialog(null, "Seleccione un electrodomestico a modificar", "Error al modificar", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Seleccione un electrodomestico a modificar", "Error", JOptionPane.ERROR_MESSAGE);
 		}else{
 			formElectrodomestico form = new formElectrodomestico(new ElectroDomesticoLogic().getOne((int)table.getValueAt(table.getSelectedRow(), 1)));
 			form.setVisible(true);
@@ -222,18 +255,23 @@ public class formMain {
 	}
 	
 	private void Eliminar(){
-		try {
-			ElectroDomesticoLogic electroDomesticoNegocio = new ElectroDomesticoLogic();
-			if(electroDomesticoNegocio.getOne((int)table.getValueAt(table.getSelectedRow(), 1)) instanceof Television){
-				new TelevisionLogic().delete((int)table.getValueAt(table.getSelectedRow(), 1));
-			}else{
-				new LavarropasLogic().delete((int)table.getValueAt(table.getSelectedRow(), 1));
+		if(table.getSelectedRow()==-1){
+			JOptionPane.showMessageDialog(null, "Seleccione un electrodomestico a eliminar", "Error", JOptionPane.ERROR_MESSAGE);
+		}else{
+			try {
+				ElectroDomesticoLogic electroDomesticoNegocio = new ElectroDomesticoLogic();
+				if(electroDomesticoNegocio.getOne((int)table.getValueAt(table.getSelectedRow(), 1)) instanceof Television){
+					new TelevisionLogic().delete((int)table.getValueAt(table.getSelectedRow(), 1));
+				}else{
+					new LavarropasLogic().delete((int)table.getValueAt(table.getSelectedRow(), 1));
+				}
+				
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(null, "Error al borrar el electrodomestico", "Error", JOptionPane.ERROR_MESSAGE);
 			}
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+		TableModel model = (TableModel) table.getModel();
+		model.clearChecks();
 		UpdateTable();
 	}
 	
@@ -242,7 +280,10 @@ public class formMain {
 		formfiltro.addApplyListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				UpdateTable(formfiltro.Aplicar());
+				formfiltro.Aplicar();
+				if(formfiltro.getResultado() != resultado.Error){					
+					UpdateTable(formfiltro.getFilteredCollection());
+				}
 			}			
 		});
 		formfiltro.setVisible(true);
@@ -266,5 +307,6 @@ public class formMain {
 		}
 	}
 	*/
+
 
 }

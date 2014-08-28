@@ -13,23 +13,23 @@ public class ColorAdapter extends Adapter{
 		if ( colores == null){
 			colores = new ArrayList<Color>();
 			Color color;
-			color = new Color("blanco");
+			color = new Color("Blanco");
 			color.setId(0);
 			color.setState(States.Unmodified);
 			colores.add(color);
-			color = new Color("Nnegro");
+			color = new Color("Negro");
 			color.setId(1);
 			color.setState(States.Unmodified);
 			colores.add(color);
-			color = new Color("rojo");
+			color = new Color("Rojo");
 			color.setId(2);
 			color.setState(States.Unmodified);
 			colores.add(color);			
-			color = new Color("azul");
+			color = new Color("Azul");
 			color.setId(3);
 			color.setState(States.Unmodified);
 			colores.add(color);	
-			color = new Color("gris");
+			color = new Color("Gris");
 			color.setId(4);
 			color.setState(States.Unmodified);
 			colores.add(color);	

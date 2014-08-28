@@ -37,7 +37,6 @@ public class TelevisionLogic extends ElectroDomesticoLogic{
 	
 	public void save(Television television){
 		TelevisionData().save(television);
-		System.out.println("Se agrego un nuevo televisor en negocio");
 	}		
 
 	public void delete(int id){

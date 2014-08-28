@@ -6,9 +6,12 @@ import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 
 import java.awt.BorderLayout;
+import java.awt.GraphicsEnvironment;
+import java.awt.Point;
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.JCheckBox;
@@ -33,11 +36,17 @@ public class formFiltro extends defaultDialog {
 	private JComboBox cbbConsumoEnergetico;
 	private JButton btnAplicar;
 	private JButton btnAceptar;
+	private ArrayList<ElectroDomestico> electroDomesticos;
 	
 	public formFiltro(){		
+		setModal(true);
 		setResizable(false);
 		setTitle("Filtrado de datos");
-		setBounds(100, 100, 398, 128);			
+	    Point center = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
+	    int windowWidth = 398;
+	    int windowHeight = 128;
+	    setBounds(center.x - windowWidth / 2, center.y - windowHeight / 2, windowWidth,
+	        windowHeight);	
 
 		
 		JPanel panel = new JPanel();
@@ -66,9 +75,9 @@ public class formFiltro extends defaultDialog {
 		panel.add(txtPrecioMax);
 		txtPrecioMax.setColumns(10);
 		
-		String[] consumos = {"Elija un valor","A","B","C","D","E","F"};
+		String[] consumos = {"A","B","C","D","E","F"};
 		cbbConsumoEnergetico = new JComboBox(consumos);
-		cbbConsumoEnergetico.setBounds(166, 43, 131, 20);
+		cbbConsumoEnergetico.setBounds(166, 43, 49, 20);
 		cbbConsumoEnergetico.setSelectedIndex(0);
 		panel.add(cbbConsumoEnergetico);
 
@@ -140,37 +149,61 @@ public class formFiltro extends defaultDialog {
 	}
 	
 	private void Aceptar(){
-		this.setResultado(resultado.Completado);
-		this.dispose();
+		if(this.getResultado() != resultado.Error){
+			this.dispose();
+		}
 	}
 	private void Cancelar(){
 		this.setResultado(resultado.Cancelado);
 		this.dispose();
 	}
-	public ArrayList<ElectroDomestico> Aplicar(){
+	public ArrayList<ElectroDomestico> getFilteredCollection(){
+		return electroDomesticos;
+	}
+	public void Aplicar(){
 		ElectroDomesticoLogic electroDomesticoNegocio = new ElectroDomesticoLogic();
-		ArrayList<ElectroDomestico> electroDomesticos = null;
-		if(this.chckbxPrecio.isSelected()){
-			try {
+		electroDomesticos = null;
+		this.setResultado(resultado.Completado);
+		if(validateinput()){
+			if(this.chckbxPrecio.isSelected()){
 				Double precio_min = Double.parseDouble(txtPrecioMin.getText());
 				Double precio_max = Double.parseDouble(txtPrecioMax.getText());
-				if(this.chckbxConsumo.isSelected()){
-					if(!(this.cbbConsumoEnergetico.getSelectedIndex() == 0)){
-						electroDomesticos = electroDomesticoNegocio.getTodos(precio_min,precio_max, this.cbbConsumoEnergetico.getSelectedItem().toString().charAt(0));	
-					} // TODO add alert message
+				if(this.chckbxConsumo.isSelected()){						
+					electroDomesticos = electroDomesticoNegocio.getTodos(precio_min,precio_max, this.cbbConsumoEnergetico.getSelectedItem().toString().charAt(0));	
 				}else{
 					electroDomesticos = electroDomesticoNegocio.getTodos(precio_min,precio_max);
-				}
-			} catch (NumberFormatException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}else if(this.chckbxConsumo.isSelected()){
-			if(!(this.cbbConsumoEnergetico.getSelectedIndex() == 0)){
+				}				
+				
+			}else if(this.chckbxConsumo.isSelected()){
 				electroDomesticos = electroDomesticoNegocio.getTodos(this.cbbConsumoEnergetico.getSelectedItem().toString().charAt(0));	
-			} // TODO add alert message
+			}
+		}else{ this.setResultado(resultado.Error);}
+	}
+
+	private boolean validateinput(){
+		if(this.chckbxPrecio.isSelected() || this.chckbxConsumo.isSelected()){
+			if(this.chckbxPrecio.isSelected()){
+				if(txtPrecioMin.getText().isEmpty() || txtPrecioMax.getText().isEmpty()){
+					JOptionPane.showMessageDialog(null, "Llene todos los campos", "Error", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}else{
+				    try
+				    {
+				       Double.parseDouble(txtPrecioMin.getText());
+				       Double.parseDouble(txtPrecioMax.getText());
+				       return true;
+				    }
+				    catch( NumberFormatException e )
+				    {
+				  	   JOptionPane.showMessageDialog(null, "Ingrese numeros reales", "Error", JOptionPane.ERROR_MESSAGE); 
+				       return false;
+				    }
+				}
+			}else { return true; }
+		}else{
+			JOptionPane.showMessageDialog(null, "Seleccione un tipo de filtrado", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
 		}
-		return electroDomesticos;		
 	}
 	public void addApplyListener(ActionListener listener) {
 		btnAplicar.addActionListener(listener);

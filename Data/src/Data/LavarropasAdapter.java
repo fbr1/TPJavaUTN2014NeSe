@@ -14,15 +14,15 @@ public class LavarropasAdapter extends Adapter {
 			lavarropas = new ArrayList<Lavarropas>();
 			Lavarropas lavarropa;
 			try {
-				lavarropa = new Lavarropas("Phillips",55,66,'D',"rojo",20);
+				lavarropa = new Lavarropas("Phillips",55,66,'D',"Rojo",20);
 				lavarropa.setState(States.Unmodified);
 				lavarropa.setId(7);
 				lavarropas.add(lavarropa);
-				lavarropa = new Lavarropas("LG",69, 34, 'B', "gris",40);
+				lavarropa = new Lavarropas("LG",69, 34, 'B', "Gris",40);
 				lavarropa.setState(States.Unmodified);
 				lavarropa.setId(8);
 				lavarropas.add(lavarropa);
-				lavarropa = new Lavarropas("Whirpool",123,321,'E',"blanco",50);
+				lavarropa = new Lavarropas("Whirpool",123,321,'E',"Blanco",50);
 				lavarropa.setState(States.Unmodified);
 				lavarropa.setId(9);
 				lavarropas.add(lavarropa);

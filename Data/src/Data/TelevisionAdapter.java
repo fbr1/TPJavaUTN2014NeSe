@@ -14,15 +14,15 @@ public class TelevisionAdapter extends Adapter{
 			televisores = new ArrayList<Television>();
 			Television television;
 			try {
-				television = new Television("Samsung",60,120,'B',"rojo",19,false);
+				television = new Television("Samsung",60,120,'B',"Rojo",19,false);
 				television.setState(States.Unmodified);
 				television.setId(4);
 				televisores.add(television);
-				television = new Television("Dell",30, 180, 'F', "negro", 21, true);
+				television = new Television("Dell",30, 180, 'F', "Negro", 21, true);
 				television.setState(States.Unmodified);
 				television.setId(5);
 				televisores.add(television);
-				television = new Television("BENQ",150,130,'A',"azul",23,false);
+				television = new Television("BENQ",150,130,'A',"Azul",23,false);
 				television.setState(States.Unmodified);
 				television.setId(6);
 				televisores.add(television);
@@ -64,7 +64,6 @@ public class TelevisionAdapter extends Adapter{
                 }
             }
             television.setId(NextID + 1);
-            System.out.println("Se agrego un nuevo televisor en datos");
             Television().add(television);            
         }
         else if (television.getState() == States.Deleted)

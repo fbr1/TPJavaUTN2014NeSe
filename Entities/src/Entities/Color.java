@@ -4,7 +4,7 @@ public class Color extends Entity{
 	
 	// Constants
 	
-	static public final String defaultColor = "blanco";
+	static public final String defaultColor = "Blanco";
 	
 	private String nombre;
 

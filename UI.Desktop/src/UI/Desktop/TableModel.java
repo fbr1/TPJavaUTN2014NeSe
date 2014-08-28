@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
+
 class TableModel extends AbstractTableModel{
 	
 	/**
@@ -53,17 +54,8 @@ class TableModel extends AbstractTableModel{
         } else {
             return false;
         }
-    }
-    
-    public void clearChecks(int row){
-    	for(int i = 0;i<this.getRowCount();i++ ){
-    		if(i!=row){
-    			data.get(i)[0] = false;
-    		}
-    	}
-    	this.setRowSelected(row);
-        fireTableRowsUpdated(0, this.getRowCount());
-    }
+    }    
+
     public int getRowSelected(){
     	return this.rowSelected;
     }
@@ -82,7 +74,12 @@ class TableModel extends AbstractTableModel{
             data.remove(obj);
             this.fireTableRowsDeleted(index, index);
         }
-    }   
-    
+    }    
+    public void clearChecks() {
+        for (int i = 0; i < getRowCount(); i++) {
+            data.get(i)[0] = false;
+        }
+        fireTableRowsUpdated(0, getRowCount());
+    }
 
 }
