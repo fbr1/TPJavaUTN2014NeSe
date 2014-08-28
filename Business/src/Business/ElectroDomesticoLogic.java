@@ -37,6 +37,10 @@ public class ElectroDomesticoLogic extends BusinessLogic{
 	{
 		return ElectroDomesticoData().getAll();
 	}
+	//public ArrayList<ElectroDomestico> getTodos(double precio_min, double precio_max)
+	//{
+	//	return ElectroDomesticoData().getAll();
+	//}
 	
 	public void save(ElectroDomestico elecDom){
 		States state = elecDom.getState();

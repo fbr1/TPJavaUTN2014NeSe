@@ -1,7 +1,7 @@
 package Entities;
 import java.lang.String;
 
-public class ElectroDomestico extends Entity{
+public class ElectroDomestico extends Entity {
 	
 	// Constants
 	static final double defaultPeso=5;
@@ -72,7 +72,11 @@ public class ElectroDomestico extends Entity{
 		this.setConsumoEnergetico(consumoEnergetico);
 		this.setColor(color);
 		
-	}	
+	}
+	//@Override
+	//public int compareTo(ElectroDomestico elecDom) {
+	//	return this.getDescripcion().compareToIgnoreCase(elecDom.getDescripcion());
+	//}	
 
 	
 	

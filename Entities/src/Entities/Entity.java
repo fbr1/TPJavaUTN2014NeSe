@@ -27,4 +27,5 @@ public class Entity {
     {
         this.setState(States.New);   
     }
+
 }

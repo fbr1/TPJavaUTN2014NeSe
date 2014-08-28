@@ -32,12 +32,11 @@ import java.awt.event.ActionEvent;
 
 
 
-public class formElectrodomestico extends JFrame implements ItemListener {
+public class formElectrodomestico extends defaultJFrame implements ItemListener {
 
 	/**
 	 * 
 	 */
-	public enum resultado { Completado, Cancelado, Error}
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField txtDescripcion;
@@ -47,7 +46,6 @@ public class formElectrodomestico extends JFrame implements ItemListener {
 	private JComboBox cbbColor;
 	private JComboBox cbbConsumo;
 	private TipoOperacion tipoOperacion;
-	private resultado result;
 	private ElectroDomestico electrodomestico;
 	private JTextField txtResolucion;
 	private JCheckBox ckbSintonizador;
@@ -55,14 +53,6 @@ public class formElectrodomestico extends JFrame implements ItemListener {
 	private JPanel cards;
 	
 	// get & set
-	
-	public resultado getResultado() {
-		return result;
-	}
-
-	public void setResultado(resultado resultado) {
-		this.result = resultado;
-	}
 
 	public TipoOperacion getTipoOperacion() {
 		return tipoOperacion;
@@ -363,5 +353,6 @@ public class formElectrodomestico extends JFrame implements ItemListener {
 		CardLayout cl = (CardLayout)(cards.getLayout());
         cl.show(cards, (String)e.getItem());
 		
-	}	
+	}
+
 }

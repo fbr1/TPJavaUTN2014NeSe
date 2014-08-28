@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -31,6 +33,7 @@ public class formMain {
 	private JFrame frame;
 	private TableModel model;
 	private JTable table;
+	private ElectroDomesticoLogic electroDomesticos;
 
 	/**
 	 * Launch the application.
@@ -60,6 +63,8 @@ public class formMain {
 	 */
 	private void initialize() {
 		
+		electroDomesticos = new ElectroDomesticoLogic();
+		
 		// Create frame
 		
 		frame = new JFrame();
@@ -79,10 +84,6 @@ public class formMain {
 		table.setColumnSelectionAllowed(false);
 		table.setSelectionMode( javax.swing.ListSelectionModel.SINGLE_SELECTION);
 		table.getTableHeader().setReorderingAllowed(false) ;
-		table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
-	        public void valueChanged(ListSelectionEvent event) {
-	        }
-	    });
 		
 		// Add table to frame
 		
@@ -120,16 +121,24 @@ public class formMain {
         });
 		mnArchivo.add(mntmEliminar);
 		
+		JMenuItem mntmFiltrar = new JMenuItem("FIltrar");
+		mntmFiltrar.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent arg0) {
+        		Filtrar();
+        	}
+        });
+		mnArchivo.add(mntmFiltrar);
+		
+		
 		JMenu mnAyuda = new JMenu("Ayuda");
 		menuBar.add(mnAyuda);
 	}
 	
-	private ArrayList<Object[]> generateTableInput(){
+	private ArrayList<Object[]> generateTableInput(ArrayList<ElectroDomestico> elecDom){	
 		
-		ElectroDomesticoLogic elecDom = new ElectroDomesticoLogic();		
-		
+		Collections.sort(elecDom, Comparator.comparing(ElectroDomestico::getDescripcion)); 
 		ArrayList<Object[]> data = new ArrayList<Object[]>();
-		for(ElectroDomestico la : elecDom.getTodos()){
+		for(ElectroDomestico la : elecDom){
 			if(la instanceof Lavarropas){
 				Object[] obj = convertLavarropasToObject(la);
 				data.add(obj);
@@ -140,6 +149,10 @@ public class formMain {
 		}
 		
 		return data;
+	}
+	
+	private ArrayList<Object[]> generateTableInput(){			
+		return generateTableInput(electroDomesticos.getTodos());		
 	}
 	
 	private Object[] convertTelevisionToObject(ElectroDomestico tes){
@@ -208,8 +221,18 @@ public class formMain {
 		UpdateTable();
 	}
 	
-	private void UpdateTable(){
-	     table.setModel(new TableModel(this.generateTableInput()));
+	private void Filtrar(){
+		formFiltro formfiltro = new formFiltro(this);
+		formfiltro.setVisible(true);
 	}
+	
+	private void UpdateTable(ArrayList<ElectroDomestico> elecDoms){
+	     table.setModel(new TableModel(this.generateTableInput(elecDoms)));
+	}
+	
+	private void UpdateTable(){
+		this.UpdateTable(electroDomesticos.getTodos());
+	}
+	
 
 }
