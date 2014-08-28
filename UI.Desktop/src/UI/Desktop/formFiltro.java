@@ -7,17 +7,18 @@ import javax.swing.JPanel;
 
 import java.awt.BorderLayout;
 
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.JCheckBox;
 import javax.swing.JButton;
 
-import UI.Desktop.defaultJFrame.resultado;
-
 public class formFiltro extends defaultJFrame {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JTextField txtPrecioMin;
 	private JTextField txtPrecioMax;
 	private JCheckBox chckbxPrecio;

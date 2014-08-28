@@ -16,8 +16,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import Business.ElectroDomesticoLogic;
 import Business.LavarropasLogic;
@@ -136,7 +134,11 @@ public class formMain {
 	
 	private ArrayList<Object[]> generateTableInput(ArrayList<ElectroDomestico> elecDom){	
 		
+		/*
+		 * El Alternativo a esta linea en java 7 es Collections.sort(elecDom, new CustomComparator());
+		 */
 		Collections.sort(elecDom, Comparator.comparing(ElectroDomestico::getDescripcion)); 
+		
 		ArrayList<Object[]> data = new ArrayList<Object[]>();
 		for(ElectroDomestico la : elecDom){
 			if(la instanceof Lavarropas){
@@ -234,5 +236,15 @@ public class formMain {
 		this.UpdateTable(electroDomesticos.getTodos());
 	}
 	
+	
+	/* Sacar el Comentario de esta porcion de codigo si se quiere usar java 7
+	 * 
+	 *
+	/*class CustomComparator implements Comparator {
+		  public int compare(ElectroDomestico o1, ElectroDomestico o2) {
+		    return o1.getDescripcion().compareTo(o2.getDescripcion());
+		}
+	}
+	*/
 
 }

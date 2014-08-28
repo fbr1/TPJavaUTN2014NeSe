@@ -33,14 +33,27 @@ public class ElectroDomesticoLogic extends BusinessLogic{
 	{
 		return ElectroDomesticoData().getAll();
 	}
+	public ArrayList<ElectroDomestico> getTodos(char consumo){
+		return ElectroDomesticoData().getAll(consumo);
+	}
 	public ArrayList<ElectroDomestico> getTodos(double precio_min, double precio_max)
 	{
-		return ElectroDomesticoData().getAll();
+		ArrayList<ElectroDomestico> electrodomesticos = new ArrayList<ElectroDomestico>();
+		for(ElectroDomestico elecDom : ElectroDomesticoData().getAll()){
+			double preciofinal = precioFinal(elecDom); 
+			if(preciofinal >= precio_min && preciofinal <= precio_max ){
+				electrodomesticos.add(elecDom);
+			}
+		}
+		return electrodomesticos;
 	}
-	//public ArrayList<ElectroDomestico> getTodos(double precio_min, double precio_max)
-	//{
-	//	return ElectroDomesticoData().getAll();
-	//}
+	public ArrayList<ElectroDomestico> getTodos(double precio_min, double precio_max, char consumo)
+	{
+		ArrayList<ElectroDomestico> electrodomesticos = new ArrayList<ElectroDomestico>();
+		electrodomesticos.addAll(this.getTodos(precio_min,precio_max));
+		electrodomesticos.addAll(this.getTodos(consumo));
+		return electrodomesticos;
+	}
 	
 	public void save(ElectroDomestico elecDom){
 		States state = elecDom.getState();
