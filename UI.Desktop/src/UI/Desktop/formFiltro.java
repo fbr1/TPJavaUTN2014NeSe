@@ -33,7 +33,7 @@ public class formFiltro extends defaultDialog {
 	private JLabel lblPrecioMinimo;
 	private JLabel lblPrecioMaximo;
 	private JLabel lblConsumoEnergetico;
-	private JComboBox cbbConsumoEnergetico;
+	private JComboBox<String> cbbConsumoEnergetico;
 	private JButton btnAplicar;
 	private JButton btnAceptar;
 	private ArrayList<ElectroDomestico> electroDomesticos;
@@ -76,7 +76,7 @@ public class formFiltro extends defaultDialog {
 		txtPrecioMax.setColumns(10);
 		
 		String[] consumos = {"A","B","C","D","E","F"};
-		cbbConsumoEnergetico = new JComboBox(consumos);
+		cbbConsumoEnergetico = new JComboBox<String>(consumos);
 		cbbConsumoEnergetico.setBounds(166, 43, 49, 20);
 		cbbConsumoEnergetico.setSelectedIndex(0);
 		panel.add(cbbConsumoEnergetico);

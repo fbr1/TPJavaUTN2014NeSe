@@ -11,7 +11,6 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -304,7 +303,7 @@ public class formMain{
 	 *
 	/*class CustomComparator implements Comparator {
 		  public int compare(ElectroDomestico o1, ElectroDomestico o2) {
-		    return o1.getDescripcion().compareTo(o2.getDescripcion());
+		    return o1.getDescripcion().compareToIgnoreCase(o2.getDescripcion());
 		}
 	}
 	*/

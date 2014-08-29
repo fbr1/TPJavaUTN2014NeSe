@@ -46,13 +46,13 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
 	private JTextField txtPrecioBase;
 	private JTextField txtPeso;
 	private JTextField txtCarga;
-	private JComboBox cbbColor;
-	private JComboBox cbbConsumo;
+	private JComboBox<String> cbbColor;
+	private JComboBox<String> cbbConsumo;
 	private TipoOperacion tipoOperacion;
 	private ElectroDomestico electrodomestico;
 	private JTextField txtResolucion;
 	private JCheckBox ckbSintonizador;
-	private JComboBox cbNuevoElectroDomestico;
+	private JComboBox<String> cbNuevoElectroDomestico;
 	private JPanel cards;
 	
 	// get & set
@@ -138,7 +138,7 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
         electroDomesticoPanel.add(lblTipoElectrodomestico);
         
         String comboBoxItems[] = {"Elije un tipo","Television", "Lavarropas" };
-        cbNuevoElectroDomestico = new JComboBox(comboBoxItems);
+        cbNuevoElectroDomestico = new JComboBox<String>(comboBoxItems);
         cbNuevoElectroDomestico.setBounds(152, 11, 122, 20);
         cbNuevoElectroDomestico.setEditable(false);
         cbNuevoElectroDomestico.addItemListener(this);    	
@@ -234,7 +234,7 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
 		electroDomesticoPanel.add(lblColor);
 		
 		String[] colores = {"Blanco","Negro","Rojo","Azul","Gris"};
-		cbbColor = new JComboBox(colores);
+		cbbColor = new JComboBox<String>(colores);
 		cbbColor.setBounds(152, 86, 79, 20);
 		cbbColor.setSelectedIndex(0);
 		electroDomesticoPanel.add(cbbColor);
@@ -244,7 +244,7 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
 		electroDomesticoPanel.add(lblConsumoEnergetico);			
 		
 		String[] consumos = {"A","B","C","D","E","F"};
-		cbbConsumo = new JComboBox(consumos);
+		cbbConsumo = new JComboBox<String>(consumos);
 		cbbConsumo.setBounds(152, 111, 44, 20);
 		cbbConsumo.setSelectedIndex(5);
 		electroDomesticoPanel.add(cbbConsumo);				
