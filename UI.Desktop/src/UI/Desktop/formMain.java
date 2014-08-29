@@ -11,6 +11,7 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -71,6 +72,7 @@ public class formMain{
 		// Create frame
 		
 		frame = new JFrame();
+		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setOpacity(1);
 		
@@ -79,8 +81,8 @@ public class formMain{
 	    Point center = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
 	    int windowWidth = 691;
 	    int windowHeight = 410;
-	    frame.setBounds(center.x - windowWidth / 2, center.y - windowHeight / 2, windowWidth,
-	        windowHeight);
+	    frame.setBounds(center.x - windowWidth / 2, center.y - windowHeight / 2, 836,
+	        415);
 		
 		// Create Model
 		
@@ -108,10 +110,7 @@ public class formMain{
 				    	// Si se selecciona una fila pero no en el checkbox, setea el checkbox a true
 				    	model.setValueAt(Boolean.TRUE, table.getSelectedRow() ,0);	    	
 			    	}
-			    	
-
-			    }
-		    	
+			    }		    	
 			}
 	    });
 		// Add table to frame
@@ -246,7 +245,7 @@ public class formMain{
 	            public void windowClosed(WindowEvent ev) {                
 	                
 	        		if(form.getResultado() == formElectrodomestico.resultado.Completado){
-	        			UpdateTable();
+	        			UpdateTable();	        			
 	        		}
 	        		form.dispose();
 	            }
@@ -259,13 +258,15 @@ public class formMain{
 			JOptionPane.showMessageDialog(null, "Seleccione un electrodomestico a eliminar", "Error", JOptionPane.ERROR_MESSAGE);
 		}else{
 			try {
-				ElectroDomesticoLogic electroDomesticoNegocio = new ElectroDomesticoLogic();
-				if(electroDomesticoNegocio.getOne((int)table.getValueAt(table.getSelectedRow(), 1)) instanceof Television){
-					new TelevisionLogic().delete((int)table.getValueAt(table.getSelectedRow(), 1));
-				}else{
-					new LavarropasLogic().delete((int)table.getValueAt(table.getSelectedRow(), 1));
+				ElectroDomestico elecDom = new ElectroDomesticoLogic().getOne((int)table.getValueAt(table.getSelectedRow(), 1));
+				int dialogResult = JOptionPane.showConfirmDialog (null, "Realmente desea borrar el electrodomestico?","Warning", JOptionPane.YES_NO_OPTION);
+				if(dialogResult == JOptionPane.YES_OPTION){
+					if(elecDom instanceof Television){
+						new TelevisionLogic().delete((int)table.getValueAt(table.getSelectedRow(), 1));
+					}else{
+						new LavarropasLogic().delete((int)table.getValueAt(table.getSelectedRow(), 1));
+					}
 				}
-				
 			} catch (Exception e) {
 				JOptionPane.showMessageDialog(null, "Error al borrar el electrodomestico", "Error", JOptionPane.ERROR_MESSAGE);
 			}

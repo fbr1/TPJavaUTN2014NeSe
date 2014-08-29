@@ -301,11 +301,12 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
 					LavarropasLogic lavarropasLogic = new LavarropasLogic();
 					Lavarropas lavarropa = new Lavarropas(txtDescripcion.getText(), Double.parseDouble(txtPrecioBase.getText()), Double.parseDouble(txtPeso.getText()), 
 															 Character.valueOf(cbbConsumo.getSelectedItem().toString().charAt(0)),
-															 (String)cbbColor.getSelectedItem(), Double.parseDouble(txtCarga.getText()));
+															 (String)cbbColor.getSelectedItem(), Double.parseDouble(txtCarga.getText()));					
 					if (this.getTipoOperacion() == formMain.TipoOperacion.alta){
 						lavarropa.setState(Entities.Entity.States.New);
 					}else{
 						lavarropa.setState(Entities.Entity.States.Modified);
+						lavarropa.setId(electrodomestico.getId());
 					}
 					lavarropasLogic.save(lavarropa);	
 					this.setResultado(resultado.Completado);
@@ -321,14 +322,14 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
 					Television television = new Television(txtDescripcion.getText(), Double.parseDouble(txtPrecioBase.getText()), Double.parseDouble(txtPeso.getText()), 
 															Character.valueOf(cbbConsumo.getSelectedItem().toString().charAt(0)),
 															(String)cbbColor.getSelectedItem(), Double.parseDouble(txtResolucion.getText()),
-															ckbSintonizador.isSelected());
-					
+															ckbSintonizador.isSelected());					
 					if (this.getTipoOperacion() == formMain.TipoOperacion.alta){
 						television.setState(Entities.Entity.States.New);
 					}else{
 						television.setState(Entities.Entity.States.Modified);
+						television.setId(electrodomestico.getId());
 					}
-					televisionLogic.save(television);	
+					televisionLogic.save(television);	    
 					this.setResultado(resultado.Completado);
 					this.dispose();
 				}

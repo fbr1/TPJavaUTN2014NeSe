@@ -71,11 +71,11 @@ public class TelevisionAdapter extends Adapter{
             this.delete(television.getId());
         }
         else if (television.getState() == States.Modified)
-        {
+        {        	
             for(Television e : Television())
             {
             	if(e.getId() == television.getId()){
-            		e = television;
+            		Television().set(Television().indexOf(e),television);   		
             	}
             }
         }

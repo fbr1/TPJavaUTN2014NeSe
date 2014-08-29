@@ -93,22 +93,23 @@ public class ElectroDomesticoLogic extends BusinessLogic{
 
 	public double precioFinal(int ID){
 		ElectroDomestico elecDom = this.getOne(ID);
-		double precioFinal =0.0;
-		
+		double precioFinal = elecDom.getPrecio_base();
+
 		//Consumos
 		ConsumoEnergeticoLogic consumos = new ConsumoEnergeticoLogic();
 		ConsumoEnergetico consumo = consumos.getOne((int)elecDom.getConsumoEnergetico());		
-		precioFinal =+ consumo.getPrecio();
+		precioFinal += consumo.getPrecio();
 		
 		//Peso Precio
 		PesoPrecioLogic pesosPrecios = new PesoPrecioLogic();	
 		double pesoElecDom = elecDom.getPeso();
 		for (PesoPrecio pp : pesosPrecios.getAll()){
 			if(pesoElecDom >= pp.getPeso_min() && pesoElecDom <= pp.getPeso_max()){
-				precioFinal =+ pp.getPrecio();
+				precioFinal += pp.getPrecio();
 				break;
 			}
 		}
+
 		return precioFinal;
 	}
 	public double precioFinal(ElectroDomestico elecDom){

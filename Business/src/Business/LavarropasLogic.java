@@ -42,7 +42,7 @@ public class LavarropasLogic extends ElectroDomesticoLogic{
 	 
 	public double precioFinal(int ID){
 		double precioFinal = super.precioFinal(ID);
-		if(this.getOne(ID).getCarga() > LavarropasLogic.MIN_CARGA ) { precioFinal =+ LavarropasLogic.RECARGO_CARGA ;}
+		if(this.getOne(ID).getCarga() > LavarropasLogic.MIN_CARGA ) { precioFinal += LavarropasLogic.RECARGO_CARGA ;}
 		return precioFinal;
 	}
 	

@@ -75,7 +75,7 @@ public class LavarropasAdapter extends Adapter {
             for(Lavarropas e : Lavarropas())
             {
             	if(e.getId() == lavarropas.getId()){
-            		e = lavarropas;
+            		Lavarropas().set(Lavarropas().indexOf(e),lavarropas);
             	}
             }
         }

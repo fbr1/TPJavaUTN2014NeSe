@@ -47,10 +47,10 @@ public class TelevisionLogic extends ElectroDomesticoLogic{
 		double precioFinal = super.precioFinal(ID);
 		Television television = this.getOne(ID);
 		if(television.getResolucion() > TelevisionLogic.MIN_PULGADAS){
-			precioFinal =+ precioFinal * TelevisionLogic.PORCENTAJE_PULGADAS_RECARGO / 100; 
+			precioFinal += precioFinal * TelevisionLogic.PORCENTAJE_PULGADAS_RECARGO / 100; 
 		}
 		if(television.tieneSinTDT()){
-			precioFinal =+ TelevisionLogic.RECARGO_TDT;
+			precioFinal += TelevisionLogic.RECARGO_TDT;
 		}
 		return precioFinal;
 	}
