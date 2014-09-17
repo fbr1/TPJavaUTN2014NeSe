@@ -133,7 +133,7 @@ public class ConsumoEnergeticoAdapter{
         try
         {
         	Connection conn = DataConnectionManager.getInstancia().getConn();
-        	statement = conn.prepareStatement("DELETE consumosenergeticos WHERE id_consumos=?");
+        	statement = conn.prepareStatement("DELETE FROM consumosenergeticos WHERE id_consumos=?");
         	statement.setInt(1, ID);
         	statement.executeUpdate();  	
         }

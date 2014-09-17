@@ -26,17 +26,17 @@ public class ElectroDomesticoLogic extends BusinessLogic{
 		this.electroDomesticoData = electroDomesticoData;
 	}	
 
-	public ElectroDomestico getOne(int id){
+	public ElectroDomestico getOne(int id) throws Exception{
 		return ElectroDomesticoData().getOne(id);
 	}
-	public ArrayList<ElectroDomestico> getTodos()
+	public ArrayList<ElectroDomestico> getTodos() throws Exception
 	{
 		return ElectroDomesticoData().getAll();
 	}
-	public ArrayList<ElectroDomestico> getTodos(char consumo){
+	public ArrayList<ElectroDomestico> getTodos(char consumo) throws Exception{
 		return ElectroDomesticoData().getAll(consumo);
 	}
-	public ArrayList<ElectroDomestico> getTodos(double precio_min, double precio_max)
+	public ArrayList<ElectroDomestico> getTodos(double precio_min, double precio_max) throws Exception
 	{
 		ArrayList<ElectroDomestico> electrodomesticos = new ArrayList<ElectroDomestico>();
 		for(ElectroDomestico elecDom : ElectroDomesticoData().getAll()){
@@ -47,7 +47,7 @@ public class ElectroDomesticoLogic extends BusinessLogic{
 		}
 		return electrodomesticos;
 	}
-	public ArrayList<ElectroDomestico> getTodos(double precio_min, double precio_max, char consumo)
+	public ArrayList<ElectroDomestico> getTodos(double precio_min, double precio_max, char consumo) throws Exception
 	{
 		ArrayList<ElectroDomestico> electrodomesticos = new ArrayList<ElectroDomestico>();
 		electrodomesticos.addAll(this.getTodos(precio_min,precio_max));
@@ -55,7 +55,7 @@ public class ElectroDomesticoLogic extends BusinessLogic{
 		return electrodomesticos;
 	}	
 	
-	protected void validateInput(ElectroDomestico elecDom) {
+	protected void validateInput(ElectroDomestico elecDom) throws Exception {
 		States state = elecDom.getState();
 		if( state == States.New || state == States.Modified){
 			String color = elecDom.getColor();
@@ -64,71 +64,53 @@ public class ElectroDomesticoLogic extends BusinessLogic{
 			ColorLogic colores = new ColorLogic();
 			boolean correcto = false;
 			
-			try {
-				for ( Color col : colores.getAll()){
-					if( color.equalsIgnoreCase(col.getNombre()) ){
-						correcto = true;
-						break;
-					}
+
+			for ( Color col : colores.getAll()){
+				if( color.equalsIgnoreCase(col.getNombre()) ){
+					correcto = true;
+					break;
 				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}	
-			if(!correcto){ elecDom.setColor(Entities.Color.defaultColor);}
-			
-			try {
-				for ( ConsumoEnergetico con : consumos.getAll()){
-					if( Character.toUpperCase(consumo) == Character.toUpperCase(con.getId()) ){
-						correcto = true;
-						break;
-					}
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
+
+			if(!correcto){ elecDom.setColor(Entities.Color.defaultColor);}			
+
+			for ( ConsumoEnergetico con : consumos.getAll()){
+				if( Character.toUpperCase(consumo) == Character.toUpperCase(con.getId()) ){
+					correcto = true;
+					break;
+				}
+			}
+
 			if(!correcto){ elecDom.setConsumoEnergetico(Entities.ConsumoEnergetico.defaultNombre);}	
 		}
 	}
 	
-	public void delete(int id){
+	public void delete(int id) throws Exception{
 		ElectroDomesticoData().delete(id);
 	}
 
-	public double precioFinal(int ID){
+	public double precioFinal(int ID) throws Exception{
 		ElectroDomestico elecDom = this.getOne(ID);
 		double precioFinal = elecDom.getPrecio_base();
 
 		//Consumos
 		ConsumoEnergeticoLogic consumos = new ConsumoEnergeticoLogic();
 		ConsumoEnergetico consumo= new ConsumoEnergetico();
-		try {
-			consumo = consumos.getOneByNombre(elecDom.getConsumoEnergetico());
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}		
+		consumo = consumos.getOneByNombre(elecDom.getConsumoEnergetico());
 		precioFinal += consumo.getPrecio();
 		
 		//Peso Precio
 		PesoPrecioLogic pesosPrecios = new PesoPrecioLogic();	
 		double pesoElecDom = elecDom.getPeso();
-		try {
-			for (PesoPrecio pp : pesosPrecios.getAll()){
-				if(pesoElecDom >= pp.getPeso_min() && pesoElecDom <= pp.getPeso_max()){
-					precioFinal += pp.getPrecio();
-					break;
-				}
+		for (PesoPrecio pp : pesosPrecios.getAll()){
+			if(pesoElecDom >= pp.getPeso_min() && pesoElecDom <= pp.getPeso_max()){
+				precioFinal += pp.getPrecio();
+				break;
 			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-
 		return precioFinal;
 	}
-	public double precioFinal(ElectroDomestico elecDom){
+	public double precioFinal(ElectroDomestico elecDom) throws Exception{
 		return this.precioFinal(elecDom.getId());
 	}
 

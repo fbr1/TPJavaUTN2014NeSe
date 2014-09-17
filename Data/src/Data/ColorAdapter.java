@@ -92,7 +92,7 @@ public class ColorAdapter{
         try
         {
         	Connection conn = DataConnectionManager.getInstancia().getConn();
-        	statement = conn.prepareStatement("DELETE colores WHERE id_color=?");
+        	statement = conn.prepareStatement("DELETE FROM colores WHERE id_color=?");
         	statement.setInt(1, ID);
         	statement.executeUpdate();  	
         }

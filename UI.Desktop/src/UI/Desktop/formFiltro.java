@@ -164,20 +164,28 @@ public class formFiltro extends defaultDialog {
 		ElectroDomesticoLogic electroDomesticoNegocio = new ElectroDomesticoLogic();
 		electroDomesticos = null;
 		this.setResultado(resultado.Completado);
-		if(validateinput()){
-			if(this.chckbxPrecio.isSelected()){
-				Double precio_min = Double.parseDouble(txtPrecioMin.getText());
-				Double precio_max = Double.parseDouble(txtPrecioMax.getText());
-				if(this.chckbxConsumo.isSelected()){						
-					electroDomesticos = electroDomesticoNegocio.getTodos(precio_min,precio_max, this.cbbConsumoEnergetico.getSelectedItem().toString().charAt(0));	
-				}else{
-					electroDomesticos = electroDomesticoNegocio.getTodos(precio_min,precio_max);
-				}				
-				
-			}else if(this.chckbxConsumo.isSelected()){
-				electroDomesticos = electroDomesticoNegocio.getTodos(this.cbbConsumoEnergetico.getSelectedItem().toString().charAt(0));	
-			}
-		}else{ this.setResultado(resultado.Error);}
+		try {
+			if(validateinput()){
+				if(this.chckbxPrecio.isSelected()){
+					Double precio_min = Double.parseDouble(txtPrecioMin.getText());
+					Double precio_max = Double.parseDouble(txtPrecioMax.getText());
+					if(this.chckbxConsumo.isSelected()){						
+						electroDomesticos = electroDomesticoNegocio.getTodos(precio_min,precio_max, this.cbbConsumoEnergetico.getSelectedItem().toString().charAt(0));	
+					}else{
+						electroDomesticos = electroDomesticoNegocio.getTodos(precio_min,precio_max);
+					}				
+					
+				}else if(this.chckbxConsumo.isSelected()){
+					electroDomesticos = electroDomesticoNegocio.getTodos(this.cbbConsumoEnergetico.getSelectedItem().toString().charAt(0));	
+				}
+			}else{ this.setResultado(resultado.Error);}
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private boolean validateinput(){

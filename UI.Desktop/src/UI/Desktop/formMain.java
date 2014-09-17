@@ -174,7 +174,7 @@ public class formMain{
 		mnAyuda.add(mntmAcercaDe);
 	}
 	
-	private ArrayList<Object[]> generateTableInput(ArrayList<ElectroDomestico> elecDom){	
+	private ArrayList<Object[]> generateTableInput(ArrayList<ElectroDomestico> elecDom) throws Exception{	
 		
 		/*
 		 * El Alternativo a esta linea en java 7 es Collections.sort(elecDom, new CustomComparator());
@@ -195,11 +195,18 @@ public class formMain{
 		return data;
 	}
 	
-	private ArrayList<Object[]> generateTableInput(){			
-		return generateTableInput(electroDomesticos.getTodos());		
+	private ArrayList<Object[]> generateTableInput(){	
+		ArrayList<Object[]> object = null;
+		try {
+			object = generateTableInput(electroDomesticos.getTodos());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+		return object;
 	}
 	
-	private Object[] convertTelevisionToObject(ElectroDomestico tes){
+	private Object[] convertTelevisionToObject(ElectroDomestico tes) throws Exception{
 		
 		Television te = (Television)tes;
 		
@@ -209,7 +216,7 @@ public class formMain{
 		return obj;
 	}
 	
-	private Object[] convertLavarropasToObject(ElectroDomestico las){
+	private Object[] convertLavarropasToObject(ElectroDomestico las) throws Exception{
 		
 		Lavarropas la = (Lavarropas)las;
 		
@@ -238,7 +245,14 @@ public class formMain{
 		if(table.getSelectedRow()==-1){
 			JOptionPane.showMessageDialog(null, "Seleccione un electrodomestico a modificar", "Error", JOptionPane.ERROR_MESSAGE);
 		}else{
-			formElectrodomestico form = new formElectrodomestico(new ElectroDomesticoLogic().getOne((int)table.getValueAt(table.getSelectedRow(), 1)));
+			ElectroDomestico elecDom=null;
+			try {
+				elecDom = new ElectroDomesticoLogic().getOne((int)table.getValueAt(table.getSelectedRow(), 1));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			formElectrodomestico form = new formElectrodomestico(elecDom);
 			form.setVisible(true);
 			form.addWindowListener(new WindowAdapter() {
 	            public void windowClosed(WindowEvent ev) {                
@@ -290,11 +304,21 @@ public class formMain{
 	}
 	
 	private void UpdateTable(ArrayList<ElectroDomestico> elecDoms){
-	     table.setModel(new TableModel(this.generateTableInput(elecDoms)));
+	     try {
+			table.setModel(new TableModel(this.generateTableInput(elecDoms)));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private void UpdateTable(){
-		this.UpdateTable(electroDomesticos.getTodos());
+		try {
+			this.UpdateTable(electroDomesticos.getTodos());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	

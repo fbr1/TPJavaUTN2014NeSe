@@ -8,7 +8,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import Entities.Television;
-import Entities.Television;
 import Entities.Entity.States;
 
 public class TelevisionAdapter{
@@ -22,22 +21,24 @@ public class TelevisionAdapter{
         {
         	Connection conn = DataConnectionManager.getInstancia().getConn();
         	statement = conn.createStatement();
-        	rs = statement.executeQuery("SELECT elec.id_electrodomestico, elec.descripcion, col.nombre_color, elec.precio_base, elec.peso, elec.resolucion, elec.TDT "
-        							  + "FROM electrodomesticos elec"
+        	rs = statement.executeQuery("SELECT elec.id_electrodomestico, elec.descripcion, col.nombre_color,con.nombre, elec.precio_base, elec.peso, elec.resolucion, elec.TDT "
+        							  + "FROM electrodomesticos elec "
         							  + "INNER JOIN colores col on col.id_color = elec.id_color "
-        							  + "WHERE elec.carga is null");       	
+        							  + "INNER JOIN consumosenergeticos con on con.id_consumos = elec.id_consumo "
+        							  + "WHERE elec.carga IS NULL");       	
 
 
             while (rs.next())
             {
             	Television television = new Television();
-            	television.setId(rs.getInt("ele.id_electrodomestico"));
-            	television.setDescripcion(rs.getString("ele.descripcion"));
+            	television.setId(rs.getInt("elec.id_electrodomestico"));
+            	television.setDescripcion(rs.getString("elec.descripcion"));
             	television.setColor(rs.getString("col.nombre_color"));
-            	television.setPrecio_base(rs.getDouble("precio_base"));
-            	television.setPeso(rs.getDouble("peso"));
-            	television.setResolucion(rs.getDouble("resolucion"));
-            	television.setSinTDT(rs.getBoolean("TDT"));
+            	television.setConsumoEnergetico(rs.getString("con.nombre").charAt(0));
+            	television.setPrecio_base(rs.getDouble("elec.precio_base"));
+            	television.setPeso(rs.getDouble("elec.peso"));
+            	television.setResolucion(rs.getDouble("elec.resolucion"));
+            	television.setSinTDT(rs.getBoolean("elec.TDT"));            	
             	televisiones.add(television);
             }
         }
@@ -68,22 +69,24 @@ public class TelevisionAdapter{
         try
         {
         	Connection conn = DataConnectionManager.getInstancia().getConn();
-        	statement = conn.prepareStatement("SELECT elec.id_electrodomestico, elec.descripcion, col.nombre_color, elec.precio_base, elec.peso, elec.resolucion, elec.TDT "
-					  + "FROM electrodomesticos elec"
+        	statement = conn.prepareStatement("SELECT elec.id_electrodomestico, elec.descripcion, col.nombre_color, con.nombre,elec.precio_base, elec.peso, elec.resolucion, elec.TDT "
+					  + "FROM electrodomesticos elec "
 					  + "INNER JOIN colores col on col.id_color = elec.id_color "
-					  + "WHERE elec.carga is null AND elec.id_electrodomestico = ?");  
+					  + "INNER JOIN consumosenergeticos con on con.id_consumos = elec.id_consumo "
+					  + "WHERE elec.carga IS NULL AND elec.id_electrodomestico = ?");  
         	statement.setInt(1, ID);
         	rs = statement.executeQuery();     	
         	
         	if(rs.next()){
         		television = new Television();
-            	television.setId(rs.getInt("ele.id_electrodomestico"));
-            	television.setDescripcion(rs.getString("ele.descripcion"));
+            	television.setId(rs.getInt("elec.id_electrodomestico"));
+            	television.setDescripcion(rs.getString("elec.descripcion"));
             	television.setColor(rs.getString("col.nombre_color"));
+            	television.setConsumoEnergetico(rs.getString("con.nombre").charAt(0));
             	television.setPrecio_base(rs.getDouble("precio_base"));
-            	television.setPeso(rs.getDouble("peso"));
-            	television.setResolucion(rs.getDouble("resolucion"));
-            	television.setSinTDT(rs.getBoolean("TDT"));
+            	television.setPeso(rs.getDouble("elec.peso"));
+            	television.setResolucion(rs.getDouble("elec.resolucion"));
+            	television.setSinTDT(rs.getBoolean("elec.TDT"));
         	}
         }
         catch (Exception Ex)
@@ -111,13 +114,14 @@ public class TelevisionAdapter{
         try
         {
         	Connection conn = DataConnectionManager.getInstancia().getConn();
-        	statement = conn.prepareStatement("DELETE electrodomesticos WHERE id_electrodomestico=?");
+        	statement = conn.prepareStatement("DELETE FROM electrodomesticos WHERE id_electrodomestico=?");
         	statement.setInt(1, ID);
         	statement.executeUpdate();  	
         }
         catch (Exception Ex)
-        {                
-            throw new Exception("Error al eliminar la television", Ex);
+        {           
+        	System.out.println(Ex.getMessage());
+            throw new Exception("Error al eliminar la television", Ex);            
         }
         finally
         {
@@ -154,11 +158,16 @@ public class TelevisionAdapter{
         try
         {
         	Connection conn = DataConnectionManager.getInstancia().getConn();
-        	statement = conn.prepareStatement("UPDATE electrodomesticos SET precio=?, nombre=? WHERE id_electrodomestico=?");
+        	statement = conn.prepareStatement("UPDATE electrodomesticos SET descripcion=?, id_color=(SELECT id_color FROM colores WHERE nombre_color=?), "
+        									+ "id_consumo = (SELECT id_consumos FROM consumosenergeticos WHERE nombre=?), precio_base=?,peso=?,resolucion=?,TDT=? WHERE id_electrodomestico=?");
         	statement.setString(1, television.getDescripcion());
-        	
-        	statement.setString(2, String.valueOf(television.getNombre()));
-        	statement.setInt(3, television.getId());        	
+        	statement.setString(2, television.getColor());
+        	statement.setString(3, String.valueOf(television.getConsumoEnergetico()));
+        	statement.setDouble(4, television.getPrecio_base());
+        	statement.setDouble(5, television.getPeso());
+        	statement.setDouble(6, television.getResolucion());
+        	statement.setBoolean(7, television.tieneSinTDT());
+        	statement.setInt(8, television.getId());        	
         	statement.executeUpdate();  	
         }
         catch (Exception Ex)
@@ -183,9 +192,16 @@ public class TelevisionAdapter{
         try
         {
         	Connection conn = DataConnectionManager.getInstancia().getConn();
-        	statement = conn.prepareStatement("INSERT INTO electrodomesticos(precio,nombre) values(?,?)", Statement.RETURN_GENERATED_KEYS);
-        	statement.setDouble(1, television.getPrecio());
-        	statement.setString(2, String.valueOf(television.getNombre()));
+        	statement = conn.prepareStatement("INSERT INTO electrodomesticos(descripcion,id_color,id_consumo,precio_base,peso,resolucion,TDT) "
+        									+ "values(?,(SELECT id_color FROM colores WHERE nombre_color=?), (SELECT id_consumos FROM consumosenergeticos WHERE nombre=?), ?,?,?,?) ", Statement.RETURN_GENERATED_KEYS);
+        	statement.setString(1, television.getDescripcion());
+        	statement.setString(2, television.getColor());
+        	statement.setString(3, String.valueOf(television.getConsumoEnergetico()));
+        	statement.setDouble(4, television.getPrecio_base());
+        	statement.setDouble(5, television.getPeso());
+        	statement.setDouble(6, television.getResolucion());
+        	statement.setBoolean(7, television.tieneSinTDT());
+        	
         	statement.executeUpdate();  	
         	ResultSet rs = statement.getGeneratedKeys();
         	if(rs.next()){

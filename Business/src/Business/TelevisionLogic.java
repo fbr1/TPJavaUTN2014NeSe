@@ -27,25 +27,25 @@ public class TelevisionLogic extends ElectroDomesticoLogic{
 		this.televisionData = televisionData;
 	}
 	
-	public ArrayList<Television> getAll()
+	public ArrayList<Television> getAll() throws Exception
 	{
 		return TelevisionData().getAll();
 	}
 
-	public Television getOne(int id){
+	public Television getOne(int id) throws Exception{
 		return TelevisionData().getOne(id);
 	}
 	
-	public void save(Television television){
+	public void save(Television television) throws Exception{
 		super.validateInput((ElectroDomestico)television);
 		TelevisionData().save(television);
 	}		
 
-	public void delete(int id){
+	public void delete(int id) throws Exception{
 		TelevisionData().delete(id);
 	}	
 	
-	public double precioFinal(int ID){
+	public double precioFinal(int ID) throws Exception{
 		double precioFinal = super.precioFinal(ID);
 		Television television = this.getOne(ID);
 		if(television.getResolucion() > TelevisionLogic.MIN_PULGADAS){
@@ -57,7 +57,7 @@ public class TelevisionLogic extends ElectroDomesticoLogic{
 		return precioFinal;
 	}
 	
-	public double precioFinal(Television television){
+	public double precioFinal(Television television) throws Exception{
 		return this.precioFinal(television.getId());
 	}
 	

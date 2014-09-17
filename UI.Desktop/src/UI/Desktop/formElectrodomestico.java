@@ -309,7 +309,12 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
 						lavarropa.setState(Entities.Entity.States.Modified);
 						lavarropa.setId(electrodomestico.getId());
 					}
-					lavarropasLogic.save(lavarropa);	
+					try {
+						lavarropasLogic.save(lavarropa);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}	
 					this.setResultado(resultado.Completado);
 					this.dispose();
 				}
@@ -330,7 +335,12 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
 						television.setState(Entities.Entity.States.Modified);
 						television.setId(electrodomestico.getId());
 					}
-					televisionLogic.save(television);	    
+					try {
+						televisionLogic.save(television);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}	    
 					this.setResultado(resultado.Completado);
 					this.dispose();
 				}

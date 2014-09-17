@@ -8,7 +8,7 @@ import Entities.Television;
 
 public class ElectroDomesticoAdapter{
 	
-	private static ArrayList<ElectroDomestico> ElectroDomesticos(){
+	private static ArrayList<ElectroDomestico> ElectroDomesticos() throws Exception{
 		
 		ArrayList<ElectroDomestico> electroDomesticos = new ArrayList<ElectroDomestico>();
 		ArrayList<Lavarropas> lava= new LavarropasAdapter().getAll();
@@ -22,11 +22,11 @@ public class ElectroDomesticoAdapter{
 		return electroDomesticos;
 	}
 
-    public ArrayList<ElectroDomestico> getAll()
+    public ArrayList<ElectroDomestico> getAll() throws Exception
     {
 		return ElectroDomesticos();
     }
-    public ArrayList<ElectroDomestico> getAll(char consumo){
+    public ArrayList<ElectroDomestico> getAll(char consumo) throws Exception{
     	ArrayList<ElectroDomestico> electroDomesticos = this.getAll();
     	ArrayList<ElectroDomestico> seleccionados = new ArrayList<ElectroDomestico>();
     	for(ElectroDomestico elec : electroDomesticos){
@@ -37,7 +37,7 @@ public class ElectroDomesticoAdapter{
     	return seleccionados;
     }
 
-    public ElectroDomestico getOne(int ID)
+    public ElectroDomestico getOne(int ID) throws Exception
     {    	
         for(ElectroDomestico e : ElectroDomesticos()){
         	if( e.getId() == ID) return e;
@@ -45,12 +45,12 @@ public class ElectroDomesticoAdapter{
         return null;
     }
 
-    public void delete(int ID)
+    public void delete(int ID) throws Exception
     {
     	ElectroDomesticos().remove(this.getOne(ID));        
     }
 
-    public void save(ElectroDomestico elecDom)
+    public void save(ElectroDomestico elecDom) throws Exception
     {
         if (elecDom.getState() == States.New)
         {

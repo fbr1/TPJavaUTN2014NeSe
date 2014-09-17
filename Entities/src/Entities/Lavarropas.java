@@ -8,7 +8,7 @@ public class Lavarropas extends ElectroDomestico{
 	public double getCarga() {
 		return carga;
 	}
-	private void setCarga(double carga) {
+	public void setCarga(double carga) {
 		this.carga = carga;
 	}
 	

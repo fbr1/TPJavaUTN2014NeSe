@@ -99,7 +99,7 @@ public class PesoPrecioAdapter{
         try
         {
         	Connection conn = DataConnectionManager.getInstancia().getConn();
-        	statement = conn.prepareStatement("DELETE pesoprecios WHERE id_pesoprecios=?");
+        	statement = conn.prepareStatement("DELETE FROM pesoprecios WHERE id_pesoprecios=?");
         	statement.setInt(1, ID);
         	statement.executeUpdate();  	
         }
