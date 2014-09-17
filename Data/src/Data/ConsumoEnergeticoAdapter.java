@@ -29,7 +29,7 @@ public class ConsumoEnergeticoAdapter{
             	ConsumoEnergetico consumoEnergetico = new ConsumoEnergetico();
             	consumoEnergetico.setId(rs.getInt("id_consumos"));
             	consumoEnergetico.setPrecio(rs.getDouble("precio"));
-            	consumoEnergetico.setNombre(rs.getString("nombre"));
+            	consumoEnergetico.setNombre(rs.getString("nombre").charAt(0));
             	consumos.add(consumoEnergetico);
             }
         }
@@ -60,7 +60,7 @@ public class ConsumoEnergeticoAdapter{
         try
         {
         	Connection conn = DataConnectionManager.getInstancia().getConn();
-        	statement = conn.prepareStatement("SELECT id_consumos, precio FROM consumosenergeticos WHERE id_consumos=?");
+        	statement = conn.prepareStatement("SELECT id_consumos, precio, nombre FROM consumosenergeticos WHERE id_consumos=?");
         	statement.setInt(1, ID);
         	rs = statement.executeQuery();     	
         	
@@ -74,7 +74,7 @@ public class ConsumoEnergeticoAdapter{
         }
         catch (Exception Ex)
         {                
-            throw new Exception("Error al recuperar el consumoEnergetico", Ex);
+            throw new Exception("Error al recuperar el consumoEnergetico por ID", Ex);
         }
         finally
         {
@@ -89,7 +89,43 @@ public class ConsumoEnergeticoAdapter{
         }
         return consumoEnergetico;
     }
+	public ConsumoEnergetico getOneByNombre(char nombreConsumo) throws Exception {
+        ConsumoEnergetico consumoEnergetico = null;
+        PreparedStatement statement=null;
+        ResultSet rs=null;
+        
+        try
+        {
+        	Connection conn = DataConnectionManager.getInstancia().getConn();
+        	statement = conn.prepareStatement("SELECT id_consumos, precio, nombre FROM consumosenergeticos WHERE nombre=?");
+        	statement.setString(1, String.valueOf(nombreConsumo));
+        	rs = statement.executeQuery();     	
+        	
+        	if(rs.next()){
+        		consumoEnergetico = new ConsumoEnergetico();
+            	consumoEnergetico.setId(rs.getInt("id_consumos"));
+            	consumoEnergetico.setPrecio(rs.getDouble("precio"));        
+            	consumoEnergetico.setNombre(rs.getString("nombre").charAt(0)); 
+        	}
 
+        }
+        catch (Exception Ex)
+        {                
+            throw new Exception("Error al recuperar el consumoEnergetico por nombre", Ex);
+        }
+        finally
+        {
+        	try{
+        		if(rs!=null){rs.close();}
+        		if(statement!=null && !statement.isClosed()){statement.close();}
+        		DataConnectionManager.getInstancia().CloseConn();
+        	}
+        	catch (SQLException sqle){
+        		sqle.printStackTrace();
+        	}
+        }
+        return consumoEnergetico;		
+	}
     public void delete(int ID) throws Exception
     {
         PreparedStatement statement=null;
@@ -192,4 +228,5 @@ public class ConsumoEnergeticoAdapter{
         	}
         }  
     }
+
 }

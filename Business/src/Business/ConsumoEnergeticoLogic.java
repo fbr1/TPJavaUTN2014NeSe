@@ -36,4 +36,8 @@ private ConsumoEnergeticoAdapter consumoEnergeticoData;
 	public void delete(int id) throws Exception{
 		ConsumoEnergeticoData().delete(id);
 	}
+
+	public ConsumoEnergetico getOneByNombre(char consumoEnergetico) throws Exception {
+		return ConsumoEnergeticoData().getOneByNombre(consumoEnergetico);
+	}
 }

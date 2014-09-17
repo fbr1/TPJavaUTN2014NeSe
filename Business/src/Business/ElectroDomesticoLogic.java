@@ -88,7 +88,7 @@ public class ElectroDomesticoLogic extends BusinessLogic{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			if(!correcto){ elecDom.setConsumoEnergetico(Entities.ConsumoEnergetico.defaultId);}	
+			if(!correcto){ elecDom.setConsumoEnergetico(Entities.ConsumoEnergetico.defaultNombre);}	
 		}
 	}
 	
@@ -104,7 +104,7 @@ public class ElectroDomesticoLogic extends BusinessLogic{
 		ConsumoEnergeticoLogic consumos = new ConsumoEnergeticoLogic();
 		ConsumoEnergetico consumo= new ConsumoEnergetico();
 		try {
-			consumo = consumos.getOne((int)elecDom.getConsumoEnergetico());
+			consumo = consumos.getOneByNombre(elecDom.getConsumoEnergetico());
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
