@@ -6,7 +6,7 @@ import Entities.Entity.States;
 import Entities.Lavarropas;
 import Entities.Television;
 
-public class ElectroDomesticoAdapter extends Adapter{
+public class ElectroDomesticoAdapter{
 	
 	private static ArrayList<ElectroDomestico> ElectroDomesticos(){
 		

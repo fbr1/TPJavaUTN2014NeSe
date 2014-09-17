@@ -20,20 +20,20 @@ private ConsumoEnergeticoAdapter consumoEnergeticoData;
 		this.consumoEnergeticoData = consumoEnergeticoData;
 	}
 	
-	public ArrayList<ConsumoEnergetico> getAll()
+	public ArrayList<ConsumoEnergetico> getAll() throws Exception
 	{
 		return ConsumoEnergeticoData().getAll();
 	}
 
-	public ConsumoEnergetico getOne(int id){
+	public ConsumoEnergetico getOne(int id) throws Exception{
 		return ConsumoEnergeticoData().getOne(id);
 	}
 	
-	public void save(ConsumoEnergetico elecDom){
+	public void save(ConsumoEnergetico elecDom) throws Exception{
 		ConsumoEnergeticoData().save(elecDom);
 	}	
 
-	public void delete(int id){
+	public void delete(int id) throws Exception{
 		ConsumoEnergeticoData().delete(id);
 	}
 }

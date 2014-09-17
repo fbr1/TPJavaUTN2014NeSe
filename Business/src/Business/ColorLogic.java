@@ -21,20 +21,20 @@ public class ColorLogic {
 		this.colorData = colorData;
 	}
 	
-	public ArrayList<Color> getAll()
+	public ArrayList<Color> getAll() throws Exception
 	{
 		return ColorData().getAll();
 	}
 
-	public Color getOne(int id){
+	public Color getOne(int id) throws Exception{
 		return ColorData().getOne(id);
 	}
 	
-	public void save(Color color){
+	public void save(Color color) throws Exception{
 		ColorData().save(color);
 	}	
 
-	public void delete(int id){
+	public void delete(int id) throws Exception{
 		ColorData().delete(id);
 	}	
 

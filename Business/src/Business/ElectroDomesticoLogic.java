@@ -53,38 +53,43 @@ public class ElectroDomesticoLogic extends BusinessLogic{
 		electrodomesticos.addAll(this.getTodos(precio_min,precio_max));
 		electrodomesticos.retainAll(this.getTodos(consumo));
 		return electrodomesticos;
-	}
+	}	
 	
-	public void save(ElectroDomestico elecDom){
+	protected void validateInput(ElectroDomestico elecDom) {
 		States state = elecDom.getState();
 		if( state == States.New || state == States.Modified){
-			this.validateInput(elecDom);
-		}
-		ElectroDomesticoData().save(elecDom);
-	}
-	
-	private void validateInput(ElectroDomestico elecDom) {
-		String color = elecDom.getColor();
-		char consumo = elecDom.getConsumoEnergetico();
-		ConsumoEnergeticoLogic consumos = new ConsumoEnergeticoLogic();
-		ColorLogic colores = new ColorLogic();
-		boolean correcto = false;
-		
-		for ( Color col : colores.getAll()){
-			if( color.equalsIgnoreCase(col.getNombre()) ){
-				correcto = true;
-				break;
+			String color = elecDom.getColor();
+			char consumo = elecDom.getConsumoEnergetico();
+			ConsumoEnergeticoLogic consumos = new ConsumoEnergeticoLogic();
+			ColorLogic colores = new ColorLogic();
+			boolean correcto = false;
+			
+			try {
+				for ( Color col : colores.getAll()){
+					if( color.equalsIgnoreCase(col.getNombre()) ){
+						correcto = true;
+						break;
+					}
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+			if(!correcto){ elecDom.setColor(Entities.Color.defaultColor);}
+			
+			try {
+				for ( ConsumoEnergetico con : consumos.getAll()){
+					if( Character.toUpperCase(consumo) == Character.toUpperCase(con.getId()) ){
+						correcto = true;
+						break;
+					}
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		}	
-		if(!correcto){ elecDom.setColor(Entities.Color.defaultColor);}
-		
-		for ( ConsumoEnergetico con : consumos.getAll()){
-			if( Character.toUpperCase(consumo) == Character.toUpperCase(con.getId()) ){
-				correcto = true;
-				break;
-			}
+			if(!correcto){ elecDom.setConsumoEnergetico(Entities.ConsumoEnergetico.defaultId);}	
 		}
-		if(!correcto){ elecDom.setConsumoEnergetico(Entities.ConsumoEnergetico.defaultId);}		
 	}
 	
 	public void delete(int id){
@@ -97,17 +102,28 @@ public class ElectroDomesticoLogic extends BusinessLogic{
 
 		//Consumos
 		ConsumoEnergeticoLogic consumos = new ConsumoEnergeticoLogic();
-		ConsumoEnergetico consumo = consumos.getOne((int)elecDom.getConsumoEnergetico());		
+		ConsumoEnergetico consumo= new ConsumoEnergetico();
+		try {
+			consumo = consumos.getOne((int)elecDom.getConsumoEnergetico());
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}		
 		precioFinal += consumo.getPrecio();
 		
 		//Peso Precio
 		PesoPrecioLogic pesosPrecios = new PesoPrecioLogic();	
 		double pesoElecDom = elecDom.getPeso();
-		for (PesoPrecio pp : pesosPrecios.getAll()){
-			if(pesoElecDom >= pp.getPeso_min() && pesoElecDom <= pp.getPeso_max()){
-				precioFinal += pp.getPrecio();
-				break;
+		try {
+			for (PesoPrecio pp : pesosPrecios.getAll()){
+				if(pesoElecDom >= pp.getPeso_min() && pesoElecDom <= pp.getPeso_max()){
+					precioFinal += pp.getPrecio();
+					break;
+				}
 			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		return precioFinal;

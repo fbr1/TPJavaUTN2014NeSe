@@ -1,87 +1,195 @@
 package Data;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import Entities.ConsumoEnergetico;
 import Entities.Entity.States;
 
-public class ConsumoEnergeticoAdapter extends Adapter{
+public class ConsumoEnergeticoAdapter{
 
-private static ArrayList<ConsumoEnergetico> consumosEnergeticos;
-	
-	private static ArrayList<ConsumoEnergetico> ConsumoEnergeticos(){
-		if ( consumosEnergeticos == null){
-			consumosEnergeticos = new ArrayList<ConsumoEnergetico>();
-			ConsumoEnergetico consumoEner;
-			consumoEner = new ConsumoEnergetico('A',100.0);
-			consumoEner.setState(States.Unmodified);
-			consumosEnergeticos.add(consumoEner);
-			consumoEner = new ConsumoEnergetico('B',80.0);
-			consumoEner.setState(States.Unmodified);
-			consumosEnergeticos.add(consumoEner);
-			consumoEner = new ConsumoEnergetico('C',60.0);
-			consumoEner.setState(States.Unmodified);
-			consumosEnergeticos.add(consumoEner);
-			consumoEner = new ConsumoEnergetico('D',50.0);
-			consumoEner.setState(States.Unmodified);
-			consumosEnergeticos.add(consumoEner);
-			consumoEner = new ConsumoEnergetico('E',30.0);
-			consumoEner.setState(States.Unmodified);
-			consumosEnergeticos.add(consumoEner);
-			consumoEner = new ConsumoEnergetico('F',10.0);
-			consumoEner.setState(States.Unmodified);
-			consumosEnergeticos.add(consumoEner);
-		
-		}
-		return consumosEnergeticos;
-	}
-
-    public ArrayList<ConsumoEnergetico> getAll()
+	public ArrayList<ConsumoEnergetico> getAll() throws Exception
     {
-        return ConsumoEnergeticos();
+        ArrayList<ConsumoEnergetico> consumos = new ArrayList<ConsumoEnergetico>();
+        Statement statement=null;
+        ResultSet rs=null;
+        try
+        {
+        	Connection conn = DataConnectionManager.getInstancia().getConn();
+        	statement = conn.createStatement();
+        	rs = statement.executeQuery("SELECT id_consumos, precio, nombre FROM consumosenergeticos");       	
+
+
+            while (rs.next())
+            {
+            	ConsumoEnergetico consumoEnergetico = new ConsumoEnergetico();
+            	consumoEnergetico.setId(rs.getInt("id_consumos"));
+            	consumoEnergetico.setPrecio(rs.getDouble("precio"));
+            	consumoEnergetico.setNombre(rs.getString("nombre"));
+            	consumos.add(consumoEnergetico);
+            }
+        }
+        catch (Exception Ex)
+        {                
+            throw new Exception("Error al recuperar datos de los consumos", Ex);
+        }
+        finally
+        {
+        	try{
+        		if(rs!=null){rs.close();}
+        		if(statement!=null && !statement.isClosed()){statement.close();}
+        		DataConnectionManager.getInstancia().CloseConn();
+        	}
+        	catch (SQLException sqle){
+        		sqle.printStackTrace();
+        	}
+        }
+        return consumos;
     }
 
-    public ConsumoEnergetico getOne(int ID)
+    public ConsumoEnergetico getOne(int ID) throws Exception
     {    	
-        for(ConsumoEnergetico e : ConsumoEnergeticos()){
-        	if( e.getId() == ID) return e;
+        ConsumoEnergetico consumoEnergetico = null;
+        PreparedStatement statement=null;
+        ResultSet rs=null;
+        
+        try
+        {
+        	Connection conn = DataConnectionManager.getInstancia().getConn();
+        	statement = conn.prepareStatement("SELECT id_consumos, precio FROM consumosenergeticos WHERE id_consumos=?");
+        	statement.setInt(1, ID);
+        	rs = statement.executeQuery();     	
+        	
+        	if(rs.next()){
+        		consumoEnergetico = new ConsumoEnergetico();
+            	consumoEnergetico.setId(rs.getInt("id_consumos"));
+            	consumoEnergetico.setPrecio(rs.getDouble("precio"));        
+            	consumoEnergetico.setNombre(rs.getString("nombre").charAt(0)); 
+        	}
+
         }
-        return null;
+        catch (Exception Ex)
+        {                
+            throw new Exception("Error al recuperar el consumoEnergetico", Ex);
+        }
+        finally
+        {
+        	try{
+        		if(rs!=null){rs.close();}
+        		if(statement!=null && !statement.isClosed()){statement.close();}
+        		DataConnectionManager.getInstancia().CloseConn();
+        	}
+        	catch (SQLException sqle){
+        		sqle.printStackTrace();
+        	}
+        }
+        return consumoEnergetico;
     }
 
-    public void delete(int ID)
+    public void delete(int ID) throws Exception
     {
-    	ConsumoEnergeticos().remove(this.getOne(ID));        
+        PreparedStatement statement=null;
+        
+        try
+        {
+        	Connection conn = DataConnectionManager.getInstancia().getConn();
+        	statement = conn.prepareStatement("DELETE consumosenergeticos WHERE id_consumos=?");
+        	statement.setInt(1, ID);
+        	statement.executeUpdate();  	
+        }
+        catch (Exception Ex)
+        {                
+            throw new Exception("Error al eliminar el consumoEnergetico", Ex);
+        }
+        finally
+        {
+        	try{
+        		if(statement!=null && !statement.isClosed()){statement.close();}
+        		DataConnectionManager.getInstancia().CloseConn();
+        	}
+        	catch (SQLException sqle){
+        		sqle.printStackTrace();
+        	}
+        }  
     }
 
-    public void save(ConsumoEnergetico consumoEner)
+    public void save(ConsumoEnergetico consumoEnergetico) throws Exception
     {
-        if (consumoEner.getState() == States.New)
+        if (consumoEnergetico.getState() == States.New)
         {
-            int NextID = 0;
-            for(ConsumoEnergetico e : ConsumoEnergeticos())
-            {
-                if (e.getId() > NextID)
-                {
-                    NextID = e.getId();
-                }
-            }
-            consumoEner.setId(NextID + 1);
-            ConsumoEnergeticos().add(consumoEner);
+        	this.insert(consumoEnergetico);
         }
-        else if (consumoEner.getState() == States.Deleted)
+        else if (consumoEnergetico.getState() == States.Deleted)
         {
-            this.delete(consumoEner.getId());
+            this.delete(consumoEnergetico.getId());
         }
-        else if (consumoEner.getState() == States.Modified)
+        else if (consumoEnergetico.getState() == States.Modified)
         {
-            for(ConsumoEnergetico e : ConsumoEnergeticos())
-            {
-            	if(e.getId() == consumoEner.getId()){
-            		e = consumoEner;
-            	}
-            }
+        	this.update(consumoEnergetico);
         }
-        consumoEner.setState(States.Unmodified);         
+        consumoEnergetico.setState(States.Unmodified);         
+    }
+    
+    public void update(ConsumoEnergetico consumoEnergetico) throws Exception{
+        PreparedStatement statement=null;
+        
+        try
+        {
+        	Connection conn = DataConnectionManager.getInstancia().getConn();
+        	statement = conn.prepareStatement("UPDATE consumosenergeticos SET precio=?, nombre=? WHERE id_consumos=?");
+        	statement.setDouble(1, consumoEnergetico.getPrecio());
+        	statement.setString(2, String.valueOf(consumoEnergetico.getNombre()));
+        	statement.setInt(3, consumoEnergetico.getId());        	
+        	statement.executeUpdate();  	
+        }
+        catch (Exception Ex)
+        {                
+            throw new Exception("Error al modificar el consumoEnergetico", Ex);
+        }
+        finally
+        {
+        	try{
+        		if(statement!=null && !statement.isClosed()){statement.close();}
+        		DataConnectionManager.getInstancia().CloseConn();
+        	}
+        	catch (SQLException sqle){
+        		sqle.printStackTrace();
+        	}
+        }      
+    }
+    
+    public void insert(ConsumoEnergetico consumoEnergetico) throws Exception{  	
+        PreparedStatement statement=null;
+        
+        try
+        {
+        	Connection conn = DataConnectionManager.getInstancia().getConn();
+        	statement = conn.prepareStatement("INSERT INTO consumosenergeticos(precio,nombre) values(?,?)", Statement.RETURN_GENERATED_KEYS);
+        	statement.setDouble(1, consumoEnergetico.getPrecio());
+        	statement.setString(2, String.valueOf(consumoEnergetico.getNombre()));
+        	statement.executeUpdate();  	
+        	ResultSet rs = statement.getGeneratedKeys();
+        	if(rs.next()){
+        		consumoEnergetico.setId(rs.getInt(1));
+        	}
+        }
+        catch (Exception Ex)
+        {                
+            throw new Exception("Error al crear el consumoEnergetico", Ex);
+        }
+        finally
+        {
+        	try{
+        		if(statement!=null && !statement.isClosed()){statement.close();}
+        		DataConnectionManager.getInstancia().CloseConn();
+        	}
+        	catch (SQLException sqle){
+        		sqle.printStackTrace();
+        	}
+        }  
     }
 }

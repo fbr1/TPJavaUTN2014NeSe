@@ -22,20 +22,20 @@ public class PesoPrecioLogic {
 		this.pesoPrecioData = pesoPrecioData;
 	}
 	
-	public ArrayList<PesoPrecio> getAll()
+	public ArrayList<PesoPrecio> getAll() throws Exception
 	{
 		return PesoPrecioData().getAll();
 	}
 
-	public PesoPrecio getOne(int id){
+	public PesoPrecio getOne(int id) throws Exception{
 		return PesoPrecioData().getOne(id);
 	}
 	
-	public void save(PesoPrecio color){
-		PesoPrecioData().save(color);
+	public void save(PesoPrecio pesoprecio) throws Exception{
+		PesoPrecioData().save(pesoprecio);
 	}	
 
-	public void delete(int id){
+	public void delete(int id) throws Exception{
 		PesoPrecioData().delete(id);
 	}	
 

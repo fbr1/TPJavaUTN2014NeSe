@@ -3,6 +3,7 @@ package Business;
 import java.util.ArrayList;
 
 import Data.LavarropasAdapter;
+import Entities.ElectroDomestico;
 import Entities.Lavarropas;
 
 public class LavarropasLogic extends ElectroDomesticoLogic{	
@@ -33,6 +34,7 @@ public class LavarropasLogic extends ElectroDomesticoLogic{
 	}
 	
 	public void save(Lavarropas lavarropas){
+		super.validateInput((ElectroDomestico)lavarropas);
 		LavarropasData().save(lavarropas);
 	}	
 

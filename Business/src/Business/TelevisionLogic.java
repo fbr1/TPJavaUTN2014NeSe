@@ -3,6 +3,7 @@ package Business;
 import java.util.ArrayList;
 
 import Data.TelevisionAdapter;
+import Entities.ElectroDomestico;
 import Entities.Television;
 
 
@@ -36,6 +37,7 @@ public class TelevisionLogic extends ElectroDomesticoLogic{
 	}
 	
 	public void save(Television television){
+		super.validateInput((ElectroDomestico)television);
 		TelevisionData().save(television);
 	}		
 

@@ -111,6 +111,7 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
 		this();
 		setTipoOperacion(formMain.TipoOperacion.modificacion);
 		setElectroDomestico(elecDom);
+		setTitle("Modificar Electrodomestico");
 		CardLayout cardLayout = (CardLayout) cards.getLayout();
 		if(electrodomestico instanceof Television){
 			cardLayout.show(cards, "Television");

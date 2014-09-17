@@ -1,74 +1,129 @@
 package Data;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import Entities.PesoPrecio;
 import Entities.Entity.States;
 
-public class PesoPrecioAdapter extends Adapter{
-	
-	private static ArrayList<PesoPrecio> pesoPrecios;
-	
-	private static ArrayList<PesoPrecio> PesoPrecios() {
-		if ( pesoPrecios == null){
-			pesoPrecios = new ArrayList<PesoPrecio>();
-			PesoPrecio pesoPrecio;
-			try {
-				pesoPrecio = new PesoPrecio(0, 19, 10);
-				pesoPrecio.setState(States.Unmodified);
-				pesoPrecio.setId(0);
-				pesoPrecios.add(pesoPrecio);
-				pesoPrecio = new PesoPrecio(20, 49, 50);
-				pesoPrecio.setState(States.Unmodified);
-				pesoPrecio.setId(1);
-				pesoPrecios.add(pesoPrecio);
-				pesoPrecio = new PesoPrecio(50, 79, 80);
-				pesoPrecio.setState(States.Unmodified);
-				pesoPrecio.setId(2);
-				pesoPrecios.add(pesoPrecio);
-				pesoPrecio = new PesoPrecio(80, Double.MAX_VALUE, 100);
-				pesoPrecio.setState(States.Unmodified);
-				pesoPrecio.setId(3);
-				pesoPrecios.add(pesoPrecio);
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-			}	
-		}
-		return pesoPrecios;
-	}
+public class PesoPrecioAdapter{
 
-    public ArrayList<PesoPrecio> getAll()
+	public ArrayList<PesoPrecio> getAll() throws Exception
     {
-        return PesoPrecios();
-    }
+        ArrayList<PesoPrecio> pesoPrecios = new ArrayList<PesoPrecio>();
+        Statement statement=null;
+        ResultSet rs=null;
+        try
+        {
+        	Connection conn = DataConnectionManager.getInstancia().getConn();
+        	statement = conn.createStatement();
+        	rs = statement.executeQuery("SELECT id_pesoprecios, peso_min, peso_max, precio FROM pesoprecios");       	
 
-    public PesoPrecio getOne(int ID)
-    {    	
-        for(PesoPrecio e : PesoPrecios()){
-        	if( e.getId() == ID) return e;
+
+            while (rs.next())
+            {
+            	PesoPrecio pesoPrecio = new PesoPrecio();
+            	pesoPrecio.setId(rs.getInt("id_pesoprecios"));
+            	pesoPrecio.setPeso_min(rs.getDouble("peso_min"));
+            	pesoPrecio.setPeso_max(rs.getDouble("peso_max"));
+            	pesoPrecio.setPrecio(rs.getDouble("precio"));
+            	pesoPrecios.add(pesoPrecio);
+            }
         }
-        return null;
+        catch (Exception Ex)
+        {                
+            throw new Exception("Error al recuperar datos de los pesoPrecios", Ex);
+        }
+        finally
+        {
+        	try{
+        		if(rs!=null){rs.close();}
+        		if(statement!=null && !statement.isClosed()){statement.close();}
+        		DataConnectionManager.getInstancia().CloseConn();
+        	}
+        	catch (SQLException sqle){
+        		sqle.printStackTrace();
+        	}
+        }
+        return pesoPrecios;
     }
 
-    public void delete(int ID)
+    public PesoPrecio getOne(int ID) throws Exception
+    {    	
+        PesoPrecio pesoPrecio = null;
+        PreparedStatement statement=null;
+        ResultSet rs=null;
+        
+        try
+        {
+        	Connection conn = DataConnectionManager.getInstancia().getConn();
+        	statement = conn.prepareStatement("SELECT id_pesoprecios, peso_min, peso_max, precio FROM pesoprecios WHERE id_pesoprecios=?");
+        	statement.setInt(1, ID);
+        	rs = statement.executeQuery();     	
+        	
+        	if(rs.next()){
+        		pesoPrecio = new PesoPrecio();
+            	pesoPrecio.setId(rs.getInt("id_pesoprecios"));
+            	pesoPrecio.setPeso_min(rs.getDouble("peso_min"));
+            	pesoPrecio.setPeso_max(rs.getDouble("peso_max"));
+            	pesoPrecio.setPrecio(rs.getDouble("precio"));        		
+        	}
+
+        }
+        catch (Exception Ex)
+        {                
+            throw new Exception("Error al recuperar el pesoPrecio", Ex);
+        }
+        finally
+        {
+        	try{
+        		if(rs!=null){rs.close();}
+        		if(statement!=null && !statement.isClosed()){statement.close();}
+        		DataConnectionManager.getInstancia().CloseConn();
+        	}
+        	catch (SQLException sqle){
+        		sqle.printStackTrace();
+        	}
+        }
+        return pesoPrecio;
+    }
+
+    public void delete(int ID) throws Exception
     {
-    	PesoPrecios().remove(this.getOne(ID));        
+        PreparedStatement statement=null;
+        
+        try
+        {
+        	Connection conn = DataConnectionManager.getInstancia().getConn();
+        	statement = conn.prepareStatement("DELETE pesoprecios WHERE id_pesoprecios=?");
+        	statement.setInt(1, ID);
+        	statement.executeUpdate();  	
+        }
+        catch (Exception Ex)
+        {                
+            throw new Exception("Error al eliminar el pesoPrecio", Ex);
+        }
+        finally
+        {
+        	try{
+        		if(statement!=null && !statement.isClosed()){statement.close();}
+        		DataConnectionManager.getInstancia().CloseConn();
+        	}
+        	catch (SQLException sqle){
+        		sqle.printStackTrace();
+        	}
+        }  
     }
 
-    public void save(PesoPrecio pesoPrecio)
+    public void save(PesoPrecio pesoPrecio) throws Exception
     {
         if (pesoPrecio.getState() == States.New)
         {
-            int NextID = 0;
-            for(PesoPrecio e : PesoPrecios())
-            {
-                if (e.getId() > NextID)
-                {
-                    NextID = e.getId();
-                }
-            }
-            pesoPrecio.setId(NextID + 1);
-            PesoPrecios().add(pesoPrecio);
+        	this.insert(pesoPrecio);
         }
         else if (pesoPrecio.getState() == States.Deleted)
         {
@@ -76,13 +131,69 @@ public class PesoPrecioAdapter extends Adapter{
         }
         else if (pesoPrecio.getState() == States.Modified)
         {
-            for(PesoPrecio e : PesoPrecios())
-            {
-            	if(e.getId() == pesoPrecio.getId()){
-            		e = pesoPrecio;
-            	}
-            }
+        	this.update(pesoPrecio);
         }
         pesoPrecio.setState(States.Unmodified);         
+    }
+    
+    public void update(PesoPrecio pesoPrecio) throws Exception{
+        PreparedStatement statement=null;
+        
+        try
+        {
+        	Connection conn = DataConnectionManager.getInstancia().getConn();
+        	statement = conn.prepareStatement("UPDATE pesoprecios SET peso_min=?, peso_max=?, precio=? WHERE id_pesoprecios=?");
+        	statement.setDouble(1, pesoPrecio.getPeso_min());
+        	statement.setDouble(2, pesoPrecio.getPeso_max());
+        	statement.setDouble(3, pesoPrecio.getPrecio());
+        	statement.setInt(4, pesoPrecio.getId());        	
+        	statement.executeUpdate();  	
+        }
+        catch (Exception Ex)
+        {                
+            throw new Exception("Error al modificar el pesoPrecio", Ex);
+        }
+        finally
+        {
+        	try{
+        		if(statement!=null && !statement.isClosed()){statement.close();}
+        		DataConnectionManager.getInstancia().CloseConn();
+        	}
+        	catch (SQLException sqle){
+        		sqle.printStackTrace();
+        	}
+        }      
+    }
+    
+    public void insert(PesoPrecio pesoPrecio) throws Exception{  	
+        PreparedStatement statement=null;
+        
+        try
+        {
+        	Connection conn = DataConnectionManager.getInstancia().getConn();
+        	statement = conn.prepareStatement("INSERT INTO pesoprecios(peso_min,peso_max,precio) values(?,?,?)", Statement.RETURN_GENERATED_KEYS);
+        	statement.setDouble(1, pesoPrecio.getPeso_min());
+        	statement.setDouble(2, pesoPrecio.getPeso_max());
+        	statement.setDouble(3, pesoPrecio.getPrecio());
+        	statement.executeUpdate();  	
+        	ResultSet rs = statement.getGeneratedKeys();
+        	if(rs.next()){
+        		pesoPrecio.setId(rs.getInt(1));
+        	}
+        }
+        catch (Exception Ex)
+        {                
+            throw new Exception("Error al crear el pesoPrecio", Ex);
+        }
+        finally
+        {
+        	try{
+        		if(statement!=null && !statement.isClosed()){statement.close();}
+        		DataConnectionManager.getInstancia().CloseConn();
+        	}
+        	catch (SQLException sqle){
+        		sqle.printStackTrace();
+        	}
+        }  
     }
 }

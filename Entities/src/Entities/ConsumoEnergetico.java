@@ -12,7 +12,7 @@ public class ConsumoEnergetico extends Entity{
 		public double getPrecio() {
 			return precio;
 		}
-		private void setPrecio(double precio) {
+		public void setPrecio(double precio) {
 			this.precio = precio;
 		}
 		// Methods

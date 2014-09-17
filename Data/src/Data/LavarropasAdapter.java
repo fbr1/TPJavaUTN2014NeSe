@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import Entities.Lavarropas;
 import Entities.Entity.States;
 
-public class LavarropasAdapter extends Adapter {
+public class LavarropasAdapter{
 	
 	private static ArrayList<Lavarropas> lavarropas;
 	

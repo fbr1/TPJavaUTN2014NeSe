@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import Entities.Television;
 import Entities.Entity.States;
 
-public class TelevisionAdapter extends Adapter{
+public class TelevisionAdapter{
 	
 	private static ArrayList<Television> televisores;
 	
