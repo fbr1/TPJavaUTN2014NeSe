@@ -1,84 +1,210 @@
 package Data;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
+import Entities.Television;
 import Entities.Television;
 import Entities.Entity.States;
 
 public class TelevisionAdapter{
-	
-	private static ArrayList<Television> televisores;
-	
-	private static ArrayList<Television> Television() {
-		if ( televisores == null){
-			televisores = new ArrayList<Television>();
-			Television television;
-			try {
-				television = new Television("Samsung",60,120,'B',"Rojo",19,false);
-				television.setState(States.Unmodified);
-				television.setId(4);
-				televisores.add(television);
-				television = new Television("Dell",30, 180, 'F', "Negro", 21, true);
-				television.setState(States.Unmodified);
-				television.setId(5);
-				televisores.add(television);
-				television = new Television("BENQ",150,130,'A',"Azul",23,false);
-				television.setState(States.Unmodified);
-				television.setId(6);
-				televisores.add(television);
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-			}	
-		}
-		return televisores;
-	}
 
-    public ArrayList<Television> getAll()
+	public ArrayList<Television> getAll() throws Exception
     {
-        return Television();
-    }
+        ArrayList<Television> televisiones = new ArrayList<Television>();
+        Statement statement=null;
+        ResultSet rs=null;
+        try
+        {
+        	Connection conn = DataConnectionManager.getInstancia().getConn();
+        	statement = conn.createStatement();
+        	rs = statement.executeQuery("SELECT elec.id_electrodomestico, elec.descripcion, col.nombre_color, elec.precio_base, elec.peso, elec.resolucion, elec.TDT "
+        							  + "FROM electrodomesticos elec"
+        							  + "INNER JOIN colores col on col.id_color = elec.id_color "
+        							  + "WHERE elec.carga is null");       	
 
-    public Television getOne(int ID)
-    {    	
-        for(Television e : Television()){
-        	if( e.getId() == ID) return e;
+
+            while (rs.next())
+            {
+            	Television television = new Television();
+            	television.setId(rs.getInt("ele.id_electrodomestico"));
+            	television.setDescripcion(rs.getString("ele.descripcion"));
+            	television.setColor(rs.getString("col.nombre_color"));
+            	television.setPrecio_base(rs.getDouble("precio_base"));
+            	television.setPeso(rs.getDouble("peso"));
+            	television.setResolucion(rs.getDouble("resolucion"));
+            	television.setSinTDT(rs.getBoolean("TDT"));
+            	televisiones.add(television);
+            }
         }
-        return null;
+        catch (Exception Ex)
+        {                
+            throw new Exception("Error al recuperar datos de las televisiones", Ex);
+        }
+        finally
+        {
+        	try{
+        		if(rs!=null){rs.close();}
+        		if(statement!=null && !statement.isClosed()){statement.close();}
+        		DataConnectionManager.getInstancia().CloseConn();
+        	}
+        	catch (SQLException sqle){
+        		sqle.printStackTrace();
+        	}
+        }
+        return televisiones;
     }
 
-    public void delete(int ID)
+    public Television getOne(int ID) throws Exception
+    {    	
+        Television television = null;
+        PreparedStatement statement=null;
+        ResultSet rs=null;
+        
+        try
+        {
+        	Connection conn = DataConnectionManager.getInstancia().getConn();
+        	statement = conn.prepareStatement("SELECT elec.id_electrodomestico, elec.descripcion, col.nombre_color, elec.precio_base, elec.peso, elec.resolucion, elec.TDT "
+					  + "FROM electrodomesticos elec"
+					  + "INNER JOIN colores col on col.id_color = elec.id_color "
+					  + "WHERE elec.carga is null AND elec.id_electrodomestico = ?");  
+        	statement.setInt(1, ID);
+        	rs = statement.executeQuery();     	
+        	
+        	if(rs.next()){
+        		television = new Television();
+            	television.setId(rs.getInt("ele.id_electrodomestico"));
+            	television.setDescripcion(rs.getString("ele.descripcion"));
+            	television.setColor(rs.getString("col.nombre_color"));
+            	television.setPrecio_base(rs.getDouble("precio_base"));
+            	television.setPeso(rs.getDouble("peso"));
+            	television.setResolucion(rs.getDouble("resolucion"));
+            	television.setSinTDT(rs.getBoolean("TDT"));
+        	}
+        }
+        catch (Exception Ex)
+        {                
+            throw new Exception("Error al recuperar la television por ID", Ex);
+        }
+        finally
+        {
+        	try{
+        		if(rs!=null){rs.close();}
+        		if(statement!=null && !statement.isClosed()){statement.close();}
+        		DataConnectionManager.getInstancia().CloseConn();
+        	}
+        	catch (SQLException sqle){
+        		sqle.printStackTrace();
+        	}
+        }
+        return television;
+    } 
+
+    public void delete(int ID) throws Exception
     {
-    	Television().remove(this.getOne(ID));        
+        PreparedStatement statement=null;
+        
+        try
+        {
+        	Connection conn = DataConnectionManager.getInstancia().getConn();
+        	statement = conn.prepareStatement("DELETE electrodomesticos WHERE id_electrodomestico=?");
+        	statement.setInt(1, ID);
+        	statement.executeUpdate();  	
+        }
+        catch (Exception Ex)
+        {                
+            throw new Exception("Error al eliminar la television", Ex);
+        }
+        finally
+        {
+        	try{
+        		if(statement!=null && !statement.isClosed()){statement.close();}
+        		DataConnectionManager.getInstancia().CloseConn();
+        	}
+        	catch (SQLException sqle){
+        		sqle.printStackTrace();
+        	}
+        }  
     }
 
-    public void save(Television television)
+    public void save(Television television) throws Exception
     {
         if (television.getState() == States.New)
         {
-            int NextID = 0;
-            for(Television e : Television())
-            {
-                if (e.getId() > NextID)
-                {
-                    NextID = e.getId();
-                }
-            }
-            television.setId(NextID + 1);
-            Television().add(television);            
+        	this.insert(television);
         }
         else if (television.getState() == States.Deleted)
         {
             this.delete(television.getId());
         }
         else if (television.getState() == States.Modified)
-        {        	
-            for(Television e : Television())
-            {
-            	if(e.getId() == television.getId()){
-            		Television().set(Television().indexOf(e),television);   		
-            	}
-            }
+        {
+        	this.update(television);
         }
         television.setState(States.Unmodified);         
+    }
+    
+    public void update(Television television) throws Exception{
+        PreparedStatement statement=null;
+        
+        try
+        {
+        	Connection conn = DataConnectionManager.getInstancia().getConn();
+        	statement = conn.prepareStatement("UPDATE electrodomesticos SET precio=?, nombre=? WHERE id_electrodomestico=?");
+        	statement.setString(1, television.getDescripcion());
+        	
+        	statement.setString(2, String.valueOf(television.getNombre()));
+        	statement.setInt(3, television.getId());        	
+        	statement.executeUpdate();  	
+        }
+        catch (Exception Ex)
+        {                
+            throw new Exception("Error al modificar la television", Ex);
+        }
+        finally
+        {
+        	try{
+        		if(statement!=null && !statement.isClosed()){statement.close();}
+        		DataConnectionManager.getInstancia().CloseConn();
+        	}
+        	catch (SQLException sqle){
+        		sqle.printStackTrace();
+        	}
+        }      
+    }
+    
+    public void insert(Television television) throws Exception{  	
+        PreparedStatement statement=null;
+        
+        try
+        {
+        	Connection conn = DataConnectionManager.getInstancia().getConn();
+        	statement = conn.prepareStatement("INSERT INTO electrodomesticos(precio,nombre) values(?,?)", Statement.RETURN_GENERATED_KEYS);
+        	statement.setDouble(1, television.getPrecio());
+        	statement.setString(2, String.valueOf(television.getNombre()));
+        	statement.executeUpdate();  	
+        	ResultSet rs = statement.getGeneratedKeys();
+        	if(rs.next()){
+        		television.setId(rs.getInt(1));
+        	}
+        }
+        catch (Exception Ex)
+        {                
+            throw new Exception("Error al crear la television", Ex);
+        }
+        finally
+        {
+        	try{
+        		if(statement!=null && !statement.isClosed()){statement.close();}
+        		DataConnectionManager.getInstancia().CloseConn();
+        	}
+        	catch (SQLException sqle){
+        		sqle.printStackTrace();
+        	}
+        }  
     }
 }

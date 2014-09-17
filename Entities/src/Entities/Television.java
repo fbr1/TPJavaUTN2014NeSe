@@ -12,7 +12,7 @@ public class Television extends ElectroDomestico{
 		return resolucion;
 	}
 
-	private void setResolucion(double resolucion) {
+	public void setResolucion(double resolucion) {
 		this.resolucion = resolucion;
 	}
 
@@ -20,7 +20,7 @@ public class Television extends ElectroDomestico{
 		return sinTDT;
 	}
 
-	private void setSinTDT(boolean sinTDT) {
+	public void setSinTDT(boolean sinTDT) {
 		this.sinTDT = sinTDT;
 	}
 	
