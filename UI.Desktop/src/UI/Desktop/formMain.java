@@ -198,7 +198,7 @@ public class formMain{
 	private ArrayList<Object[]> generateTableInput(){	
 		ArrayList<Object[]> object = null;
 		try {
-			object = generateTableInput(electroDomesticos.getTodos());
+			object = generateTableInput(electroDomesticos.getAll());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -314,7 +314,7 @@ public class formMain{
 	
 	private void UpdateTable(){
 		try {
-			this.UpdateTable(electroDomesticos.getTodos());
+			this.UpdateTable(electroDomesticos.getAll());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -170,13 +170,13 @@ public class formFiltro extends defaultDialog {
 					Double precio_min = Double.parseDouble(txtPrecioMin.getText());
 					Double precio_max = Double.parseDouble(txtPrecioMax.getText());
 					if(this.chckbxConsumo.isSelected()){						
-						electroDomesticos = electroDomesticoNegocio.getTodos(precio_min,precio_max, this.cbbConsumoEnergetico.getSelectedItem().toString().charAt(0));	
+						electroDomesticos = electroDomesticoNegocio.getAll(precio_min,precio_max, this.cbbConsumoEnergetico.getSelectedItem().toString().charAt(0));						
 					}else{
-						electroDomesticos = electroDomesticoNegocio.getTodos(precio_min,precio_max);
+						electroDomesticos = electroDomesticoNegocio.getAll(precio_min,precio_max);
 					}				
 					
 				}else if(this.chckbxConsumo.isSelected()){
-					electroDomesticos = electroDomesticoNegocio.getTodos(this.cbbConsumoEnergetico.getSelectedItem().toString().charAt(0));	
+					electroDomesticos = electroDomesticoNegocio.getAll(this.cbbConsumoEnergetico.getSelectedItem().toString().charAt(0));	
 				}
 			}else{ this.setResultado(resultado.Error);}
 		} catch (NumberFormatException e) {

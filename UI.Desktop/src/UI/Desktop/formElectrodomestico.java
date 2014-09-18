@@ -1,7 +1,7 @@
 package UI.Desktop;
 
-import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.CardLayout;
 import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.GraphicsEnvironment;
@@ -11,6 +11,7 @@ import java.awt.event.ItemListener;
 
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -19,6 +20,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 
+import Business.ColorLogic;
+import Business.ConsumoEnergeticoLogic;
 import Business.LavarropasLogic;
 import Business.TelevisionLogic;
 import UI.Desktop.formMain.TipoOperacion;
@@ -46,8 +49,8 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
 	private JTextField txtPrecioBase;
 	private JTextField txtPeso;
 	private JTextField txtCarga;
-	private JComboBox<String> cbbColor;
-	private JComboBox<String> cbbConsumo;
+	private JComboBox<Entities.Color> cbbColor;
+	private JComboBox<Entities.ConsumoEnergetico> cbbConsumo;
 	private TipoOperacion tipoOperacion;
 	private ElectroDomestico electrodomestico;
 	private JTextField txtResolucion;
@@ -234,8 +237,16 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
 		lblColor.setBounds(10, 89, 44, 14);
 		electroDomesticoPanel.add(lblColor);
 		
-		String[] colores = {"Blanco","Negro","Rojo","Azul","Gris"};
-		cbbColor = new JComboBox<String>(colores);
+		DefaultComboBoxModel<Entities.Color> model = new DefaultComboBoxModel<Entities.Color>();
+		try {
+			for(Entities.Color col : new ColorLogic().getAll()){
+				model.addElement(col);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		cbbColor = new JComboBox<Entities.Color>(model);
 		cbbColor.setBounds(152, 86, 79, 20);
 		cbbColor.setSelectedIndex(0);
 		electroDomesticoPanel.add(cbbColor);
@@ -244,8 +255,16 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
 		lblConsumoEnergetico.setBounds(10, 114, 132, 14);
 		electroDomesticoPanel.add(lblConsumoEnergetico);			
 		
-		String[] consumos = {"A","B","C","D","E","F"};
-		cbbConsumo = new JComboBox<String>(consumos);
+		DefaultComboBoxModel<Entities.ConsumoEnergetico> model2 = new DefaultComboBoxModel<Entities.ConsumoEnergetico>();
+		try {
+			for(Entities.ConsumoEnergetico consu : new ConsumoEnergeticoLogic().getAll()){
+				model2.addElement(consu);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		cbbConsumo = new JComboBox<Entities.ConsumoEnergetico>(model2);
 		cbbConsumo.setBounds(152, 111, 44, 20);
 		cbbConsumo.setSelectedIndex(5);
 		electroDomesticoPanel.add(cbbConsumo);				
@@ -301,8 +320,8 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
 				if(validateinput()){
 					LavarropasLogic lavarropasLogic = new LavarropasLogic();
 					Lavarropas lavarropa = new Lavarropas(txtDescripcion.getText(), Double.parseDouble(txtPrecioBase.getText()), Double.parseDouble(txtPeso.getText()), 
-															 Character.valueOf(cbbConsumo.getSelectedItem().toString().charAt(0)),
-															 (String)cbbColor.getSelectedItem(), Double.parseDouble(txtCarga.getText()));					
+															 (Entities.ConsumoEnergetico)cbbConsumo.getSelectedItem(),
+															 (Entities.Color)cbbColor.getSelectedItem(), Double.parseDouble(txtCarga.getText()));						
 					if (this.getTipoOperacion() == formMain.TipoOperacion.alta){
 						lavarropa.setState(Entities.Entity.States.New);
 					}else{
@@ -326,8 +345,8 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
 				if(validateinput()){
 					TelevisionLogic televisionLogic = new TelevisionLogic();
 					Television television = new Television(txtDescripcion.getText(), Double.parseDouble(txtPrecioBase.getText()), Double.parseDouble(txtPeso.getText()), 
-															Character.valueOf(cbbConsumo.getSelectedItem().toString().charAt(0)),
-															(String)cbbColor.getSelectedItem(), Double.parseDouble(txtResolucion.getText()),
+															(Entities.ConsumoEnergetico)cbbConsumo.getSelectedItem(),
+															 (Entities.Color)cbbColor.getSelectedItem(), Double.parseDouble(txtResolucion.getText()),
 															ckbSintonizador.isSelected());					
 					if (this.getTipoOperacion() == formMain.TipoOperacion.alta){
 						television.setState(Entities.Entity.States.New);
@@ -393,9 +412,8 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
 		TextPrompt txtpPeso = new TextPrompt(String.valueOf(elecDom.getPeso()), this.txtPeso);
 		txtpPeso.setForeground(Color.GRAY);
 		
-		this.cbbColor.setSelectedItem(elecDom.getColor());
 		
-		this.cbbConsumo.setSelectedItem(Character.toString(elecDom.getConsumoEnergetico())); 
+		this.cbbConsumo.setSelectedItem(elecDom.getConsumoEnergetico()); 
 		
 		if ( elecDom instanceof Television){
 			

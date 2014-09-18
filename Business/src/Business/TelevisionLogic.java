@@ -1,6 +1,6 @@
 package Business;
 
-import java.util.ArrayList;
+
 
 import Data.TelevisionAdapter;
 import Entities.ElectroDomestico;
@@ -25,11 +25,6 @@ public class TelevisionLogic extends ElectroDomesticoLogic{
 
 	public void setTelevisionData(TelevisionAdapter televisionData) {
 		this.televisionData = televisionData;
-	}
-	
-	public ArrayList<Television> getAll() throws Exception
-	{
-		return TelevisionData().getAll();
 	}
 
 	public Television getOne(int id) throws Exception{

@@ -29,21 +29,21 @@ public class Television extends ElectroDomestico{
 	private boolean sinTDT;
 	
 	// Methods	
-	//*Television(double precio, double peso, char consumoEnergetico, String color, double resolucion, boolean sinTDT) /
+	//*Television(double precio, double peso, ConsumoEnergetico consumoEnergetico, Color color, double resolucion, boolean sinTDT) /
 	public Television(){
 		super();
 		this.setResolucion(Television.defaultResolucion);
 		this.setSinTDT(Television.defaultSinTDT);
 	}
-	//*Television(double precio, double peso, char consumoEnergetico, String color, double resolucion, boolean sinTDT) /
+	//*Television(double precio, double peso, ConsumoEnergetico consumoEnergetico, Color color, double resolucion, boolean sinTDT) /
 	public Television(double precio, double peso){
 		super(precio,peso);
 		this.setResolucion(Television.defaultResolucion);
 		this.setSinTDT(Television.defaultSinTDT);
 	}
-	//*Television(double precio, double peso, char consumoEnergetico, String color, double resolucion, boolean sinTDT) /
-	public Television(String descripcion,double precio, double peso, char consumoEnergetico,
-			String color, double resolucion, boolean sinTDT) 
+	//*Television(double precio, double peso, ConsumoEnergetico consumoEnergetico, Color color, double resolucion, boolean sinTDT) /
+	public Television(String descripcion,double precio, double peso, ConsumoEnergetico consumoEnergetico,
+			Color color, double resolucion, boolean sinTDT) 
 	{
 		super(descripcion, precio, peso, consumoEnergetico, color); 
 		this.setResolucion(resolucion);

@@ -7,8 +7,10 @@ import Data.ElectroDomesticoAdapter;
 import Entities.ConsumoEnergetico;
 import Entities.ElectroDomestico;
 import Entities.Color;
+import Entities.Lavarropas;
 import Entities.PesoPrecio;
 import Entities.Entity.States;
+import Entities.Television;
 
 public class ElectroDomesticoLogic extends BusinessLogic{	
 	
@@ -29,37 +31,47 @@ public class ElectroDomesticoLogic extends BusinessLogic{
 	public ElectroDomestico getOne(int id) throws Exception{
 		return ElectroDomesticoData().getOne(id);
 	}
-	public ArrayList<ElectroDomestico> getTodos() throws Exception
-	{
+	
+	public ArrayList<ElectroDomestico> getAll() throws Exception{
 		return ElectroDomesticoData().getAll();
 	}
-	public ArrayList<ElectroDomestico> getTodos(char consumo) throws Exception{
+
+	public ArrayList<ElectroDomestico> getAll(char consumo) throws Exception{
 		return ElectroDomesticoData().getAll(consumo);
 	}
-	public ArrayList<ElectroDomestico> getTodos(double precio_min, double precio_max) throws Exception
+	public ArrayList<ElectroDomestico> getAll(double precio_min, double precio_max) throws Exception
 	{
 		ArrayList<ElectroDomestico> electrodomesticos = new ArrayList<ElectroDomestico>();
 		for(ElectroDomestico elecDom : ElectroDomesticoData().getAll()){
-			double preciofinal = precioFinal(elecDom); 
-			if(preciofinal >= precio_min && preciofinal <= precio_max ){
-				electrodomesticos.add(elecDom);
+			double preciofinal = 0;
+			if(elecDom instanceof Television){     // TODO no se si esta bien implementado con respecto a la orientacion a objetos
+				preciofinal = new TelevisionLogic().precioFinal((Television)elecDom);
+			}else if(elecDom instanceof Lavarropas){
+				preciofinal = new LavarropasLogic().precioFinal((Lavarropas)elecDom);
+			}				
+			if(preciofinal != 0){
+				if(preciofinal >= precio_min && preciofinal <= precio_max ){
+					electrodomesticos.add(elecDom);
+				}
+			}else{
+				throw new Exception("Hubo un error en el filtrado de datos");
 			}
 		}
 		return electrodomesticos;
 	}
-	public ArrayList<ElectroDomestico> getTodos(double precio_min, double precio_max, char consumo) throws Exception
+	public ArrayList<ElectroDomestico> getAll(double precio_min, double precio_max, char consumo) throws Exception
 	{
 		ArrayList<ElectroDomestico> electrodomesticos = new ArrayList<ElectroDomestico>();
-		electrodomesticos.addAll(this.getTodos(precio_min,precio_max));
-		electrodomesticos.retainAll(this.getTodos(consumo));
+		electrodomesticos.addAll(this.getAll(precio_min,precio_max));
+		electrodomesticos.retainAll(this.getAll(consumo));
 		return electrodomesticos;
 	}	
 	
 	protected void validateInput(ElectroDomestico elecDom) throws Exception {
 		States state = elecDom.getState();
 		if( state == States.New || state == States.Modified){
-			String color = elecDom.getColor();
-			char consumo = elecDom.getConsumoEnergetico();
+			String color = elecDom.getColor().getNombre();
+			char consumo = elecDom.getConsumoEnergetico().getNombre();
 			ConsumoEnergeticoLogic consumos = new ConsumoEnergeticoLogic();
 			ColorLogic colores = new ColorLogic();
 			boolean correcto = false;
@@ -72,7 +84,7 @@ public class ElectroDomesticoLogic extends BusinessLogic{
 				}
 			}
 
-			if(!correcto){ elecDom.setColor(Entities.Color.defaultColor);}			
+			if(!correcto){ elecDom.setColor(new Color());}			
 
 			for ( ConsumoEnergetico con : consumos.getAll()){
 				if( Character.toUpperCase(consumo) == Character.toUpperCase(con.getId()) ){
@@ -81,13 +93,10 @@ public class ElectroDomesticoLogic extends BusinessLogic{
 				}
 			}
 
-			if(!correcto){ elecDom.setConsumoEnergetico(Entities.ConsumoEnergetico.defaultNombre);}	
+			if(!correcto){ elecDom.setConsumoEnergetico(new ConsumoEnergetico());}	
 		}
 	}
-	
-	public void delete(int id) throws Exception{
-		ElectroDomesticoData().delete(id);
-	}
+
 
 	public double precioFinal(int ID) throws Exception{
 		ElectroDomestico elecDom = this.getOne(ID);
@@ -96,7 +105,7 @@ public class ElectroDomesticoLogic extends BusinessLogic{
 		//Consumos
 		ConsumoEnergeticoLogic consumos = new ConsumoEnergeticoLogic();
 		ConsumoEnergetico consumo= new ConsumoEnergetico();
-		consumo = consumos.getOneByNombre(elecDom.getConsumoEnergetico());
+		consumo = consumos.getOneByNombre(elecDom.getConsumoEnergetico().getNombre());
 		precioFinal += consumo.getPrecio();
 		
 		//Peso Precio

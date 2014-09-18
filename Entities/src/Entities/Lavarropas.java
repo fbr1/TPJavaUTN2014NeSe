@@ -13,19 +13,19 @@ public class Lavarropas extends ElectroDomestico{
 	}
 	
 	// Methods
-	//* Lavarropas(double precio, double peso,char consumoEnergetico, String color, double carga) /
+	//* Lavarropas(double precio, double peso,ConsumoEnergetico consumoEnergetico, Color color, double carga) /
 	public Lavarropas(){
 		super();
 		this.setCarga(Lavarropas.defaultCarga);
 	}
-	//* Lavarropas(double precio, double peso,char consumoEnergetico, String color, double carga) /
+	//* Lavarropas(double precio, double peso,ConsumoEnergetico consumoEnergetico, Color color, double carga) /
 	public Lavarropas(double precio, double peso) {
 		super(precio, peso);
 		this.setCarga(Lavarropas.defaultCarga);
 	}
-	//* Lavarropas(double precio, double peso,char consumoEnergetico, String color, double carga) /
+	//* Lavarropas(double precio, double peso,char consumoEnergetico, Color color, double carga) /
 	public Lavarropas(String descripcion,double precio, double peso,
-			char consumoEnergetico, String color, double carga) {
+			ConsumoEnergetico consumoEnergetico, Color color, double carga) {
 		super(descripcion, precio, peso, consumoEnergetico, color);		
 		this.setCarga(carga);
 	}		

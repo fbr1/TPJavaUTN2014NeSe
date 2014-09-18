@@ -1,6 +1,5 @@
 package Business;
 
-import java.util.ArrayList;
 
 import Data.LavarropasAdapter;
 import Entities.ElectroDomestico;
@@ -23,10 +22,6 @@ public class LavarropasLogic extends ElectroDomesticoLogic{
 
 	public void setLavarropasData(LavarropasAdapter lavarropasData) {
 		this.lavarropasData = lavarropasData;
-	}
-	public ArrayList<Lavarropas> getAll() throws Exception
-	{
-		return LavarropasData().getAll();
 	}
 
 	public Lavarropas getOne(int id) throws Exception{

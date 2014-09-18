@@ -27,5 +27,10 @@ public class Entity {
     {
         this.setState(States.New);   
     }
+    public Entity(int id)
+    {
+    	this.setId(id);
+        this.setState(States.New);   
+    }
 
 }

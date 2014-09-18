@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import Entities.Color;
+import Entities.ConsumoEnergetico;
 import Entities.Television;
 import Entities.Entity.States;
 
@@ -21,7 +23,8 @@ public class TelevisionAdapter{
         {
         	Connection conn = DataConnectionManager.getInstancia().getConn();
         	statement = conn.createStatement();
-        	rs = statement.executeQuery("SELECT elec.id_electrodomestico, elec.descripcion, col.nombre_color,con.nombre, elec.precio_base, elec.peso, elec.resolucion, elec.TDT "
+        	rs = statement.executeQuery("SELECT elec.id_electrodomestico, elec.descripcion, col.nombre_color,con.nombre, con.precio, elec.precio_base, "
+        							  + " elec.peso, elec.resolucion, elec.TDT, elec.id_color, elec.id_consumo "
         							  + "FROM electrodomesticos elec "
         							  + "INNER JOIN colores col on col.id_color = elec.id_color "
         							  + "INNER JOIN consumosenergeticos con on con.id_consumos = elec.id_consumo "
@@ -33,8 +36,8 @@ public class TelevisionAdapter{
             	Television television = new Television();
             	television.setId(rs.getInt("elec.id_electrodomestico"));
             	television.setDescripcion(rs.getString("elec.descripcion"));
-            	television.setColor(rs.getString("col.nombre_color"));
-            	television.setConsumoEnergetico(rs.getString("con.nombre").charAt(0));
+            	television.setColor(new Color(rs.getInt("elec.id_color"),rs.getString("col.nombre_color")));
+            	television.setConsumoEnergetico(new ConsumoEnergetico(rs.getInt("elec.id_consumo"),rs.getString("con.nombre").charAt(0),rs.getDouble("con.precio")));
             	television.setPrecio_base(rs.getDouble("elec.precio_base"));
             	television.setPeso(rs.getDouble("elec.peso"));
             	television.setResolucion(rs.getDouble("elec.resolucion"));
@@ -69,11 +72,12 @@ public class TelevisionAdapter{
         try
         {
         	Connection conn = DataConnectionManager.getInstancia().getConn();
-        	statement = conn.prepareStatement("SELECT elec.id_electrodomestico, elec.descripcion, col.nombre_color, con.nombre,elec.precio_base, elec.peso, elec.resolucion, elec.TDT "
-					  + "FROM electrodomesticos elec "
-					  + "INNER JOIN colores col on col.id_color = elec.id_color "
-					  + "INNER JOIN consumosenergeticos con on con.id_consumos = elec.id_consumo "
-					  + "WHERE elec.carga IS NULL AND elec.id_electrodomestico = ?");  
+        	statement = conn.prepareStatement("SELECT elec.id_electrodomestico, elec.descripcion, col.nombre_color, con.nombre,con.precio, elec.precio_base, "
+						        		  	  + "elec.peso, elec.resolucion, elec.TDT, elec.id_color, elec.id_consumo "
+											  + "FROM electrodomesticos elec "
+											  + "INNER JOIN colores col on col.id_color = elec.id_color "
+											  + "INNER JOIN consumosenergeticos con on con.id_consumos = elec.id_consumo "
+											  + "WHERE elec.carga IS NULL AND elec.id_electrodomestico = ?");  
         	statement.setInt(1, ID);
         	rs = statement.executeQuery();     	
         	
@@ -81,8 +85,8 @@ public class TelevisionAdapter{
         		television = new Television();
             	television.setId(rs.getInt("elec.id_electrodomestico"));
             	television.setDescripcion(rs.getString("elec.descripcion"));
-            	television.setColor(rs.getString("col.nombre_color"));
-            	television.setConsumoEnergetico(rs.getString("con.nombre").charAt(0));
+            	television.setColor(new Color(rs.getInt("elec.id_color"),rs.getString("col.nombre_color")));
+            	television.setConsumoEnergetico(new ConsumoEnergetico(rs.getInt("elec.id_consumo"),rs.getString("con.nombre").charAt(0),rs.getDouble("con.precio")));
             	television.setPrecio_base(rs.getDouble("precio_base"));
             	television.setPeso(rs.getDouble("elec.peso"));
             	television.setResolucion(rs.getDouble("elec.resolucion"));
@@ -158,11 +162,11 @@ public class TelevisionAdapter{
         try
         {
         	Connection conn = DataConnectionManager.getInstancia().getConn();
-        	statement = conn.prepareStatement("UPDATE electrodomesticos SET descripcion=?, id_color=(SELECT id_color FROM colores WHERE nombre_color=?), "
-        									+ "id_consumo = (SELECT id_consumos FROM consumosenergeticos WHERE nombre=?), precio_base=?,peso=?,resolucion=?,TDT=? WHERE id_electrodomestico=?");
+        	statement = conn.prepareStatement("UPDATE electrodomesticos SET descripcion=?, id_color=?, "
+        									+ "id_consumo = ?, precio_base=?,peso=?,resolucion=?,TDT=? WHERE id_electrodomestico=?");
         	statement.setString(1, television.getDescripcion());
-        	statement.setString(2, television.getColor());
-        	statement.setString(3, String.valueOf(television.getConsumoEnergetico()));
+			statement.setInt(2, television.getColor().getId());
+			statement.setInt(3, television.getConsumoEnergetico().getId());
         	statement.setDouble(4, television.getPrecio_base());
         	statement.setDouble(5, television.getPeso());
         	statement.setDouble(6, television.getResolucion());
@@ -193,10 +197,10 @@ public class TelevisionAdapter{
         {
         	Connection conn = DataConnectionManager.getInstancia().getConn();
         	statement = conn.prepareStatement("INSERT INTO electrodomesticos(descripcion,id_color,id_consumo,precio_base,peso,resolucion,TDT) "
-        									+ "values(?,(SELECT id_color FROM colores WHERE nombre_color=?), (SELECT id_consumos FROM consumosenergeticos WHERE nombre=?), ?,?,?,?) ", Statement.RETURN_GENERATED_KEYS);
+        									+ "values(?,?, ?, ?,?,?,?) ", Statement.RETURN_GENERATED_KEYS);
         	statement.setString(1, television.getDescripcion());
-        	statement.setString(2, television.getColor());
-        	statement.setString(3, String.valueOf(television.getConsumoEnergetico()));
+			statement.setInt(2, television.getColor().getId());
+			statement.setInt(3, television.getConsumoEnergetico().getId());
         	statement.setDouble(4, television.getPrecio_base());
         	statement.setDouble(5, television.getPeso());
         	statement.setDouble(6, television.getResolucion());

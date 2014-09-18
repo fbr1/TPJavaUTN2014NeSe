@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import Entities.Color;
+import Entities.ConsumoEnergetico;
 import Entities.Lavarropas;
 import Entities.Entity.States;
 
@@ -21,7 +23,8 @@ public class LavarropasAdapter{
         {
         	Connection conn = DataConnectionManager.getInstancia().getConn();
         	statement = conn.createStatement();
-        	rs = statement.executeQuery("SELECT elec.id_electrodomestico, elec.descripcion, col.nombre_color,con.nombre, elec.precio_base, elec.peso, elec.carga "
+        	rs = statement.executeQuery("SELECT elec.id_electrodomestico, elec.descripcion, col.nombre_color,con.nombre, con.precio, elec.precio_base, "
+        			  + "elec.id_color, elec.id_consumo, elec.peso, elec.carga "
 					  + "FROM electrodomesticos elec "
 					  + "INNER JOIN colores col on (col.id_color = elec.id_color) "
 					  + "INNER JOIN consumosenergeticos con on con.id_consumos = elec.id_consumo "
@@ -33,8 +36,8 @@ public class LavarropasAdapter{
             	Lavarropas lavarropa = new Lavarropas();
             	lavarropa.setId(rs.getInt("elec.id_electrodomestico"));
             	lavarropa.setDescripcion(rs.getString("elec.descripcion"));
-            	lavarropa.setColor(rs.getString("col.nombre_color"));
-            	lavarropa.setConsumoEnergetico(rs.getString("con.nombre").charAt(0));
+            	lavarropa.setColor(new Color(rs.getInt("elec.id_color"),rs.getString("col.nombre_color")));
+            	lavarropa.setConsumoEnergetico(new ConsumoEnergetico(rs.getInt("elec.id_consumo"),rs.getString("con.nombre").charAt(0),rs.getDouble("con.precio")));
             	lavarropa.setPrecio_base(rs.getDouble("elec.precio_base"));
             	lavarropa.setPeso(rs.getDouble("elec.peso"));
             	lavarropa.setCarga(rs.getDouble("elec.carga"));
@@ -68,7 +71,8 @@ public class LavarropasAdapter{
         try
         {
         	Connection conn = DataConnectionManager.getInstancia().getConn();
-        	statement = conn.prepareStatement("SELECT elec.id_electrodomestico, elec.descripcion, col.nombre_color,con.nombre, con.nombre,elec.precio_base, elec.peso, elec.carga "
+        	statement = conn.prepareStatement("SELECT elec.id_electrodomestico, elec.descripcion, col.nombre_color,con.nombre, con.precio, con.nombre,elec.precio_base, "
+        		      + "elec.id_color, elec.id_consumo, elec.peso, elec.carga "
 					  + "FROM electrodomesticos elec "
 					  + "INNER JOIN colores col on col.id_color = elec.id_color "
 					  + "INNER JOIN consumosenergeticos con on con.id_consumos = elec.id_consumo "
@@ -80,8 +84,8 @@ public class LavarropasAdapter{
         		lavarropa = new Lavarropas();
             	lavarropa.setId(rs.getInt("elec.id_electrodomestico"));
             	lavarropa.setDescripcion(rs.getString("elec.descripcion"));
-            	lavarropa.setColor(rs.getString("col.nombre_color"));
-            	lavarropa.setConsumoEnergetico(rs.getString("con.nombre").charAt(0));
+            	lavarropa.setColor(new Color(rs.getInt("elec.id_color"),rs.getString("col.nombre_color")));
+            	lavarropa.setConsumoEnergetico(new ConsumoEnergetico(rs.getInt("elec.id_consumo"),rs.getString("con.nombre").charAt(0),rs.getDouble("con.precio")));
             	lavarropa.setPrecio_base(rs.getDouble("elec.precio_base"));
             	lavarropa.setPeso(rs.getDouble("elec.peso"));
             	lavarropa.setCarga(rs.getDouble("elec.carga"));
@@ -156,11 +160,11 @@ public class LavarropasAdapter{
         try
         {
         	Connection conn = DataConnectionManager.getInstancia().getConn();
-        	statement = conn.prepareStatement("UPDATE electrodomesticos SET descripcion=?, id_color=(SELECT id_color FROM colores WHERE nombre_color=?), "
-        									+ "id_consumo =( SELECT id_consumos FROM consumosenergeticos WHERE nombre=?), precio_base=?,peso=?,carga=? WHERE id_electrodomestico=?");
+        	statement = conn.prepareStatement("UPDATE electrodomesticos SET descripcion=?, id_color=?, "
+        									+ "id_consumo =?, precio_base=?,peso=?,carga=? WHERE id_electrodomestico=?");
         	statement.setString(1, lavarropa.getDescripcion());
-        	statement.setString(2, lavarropa.getColor());
-        	statement.setString(3, String.valueOf(lavarropa.getConsumoEnergetico()));
+			statement.setInt(2, lavarropa.getColor().getId());
+			statement.setInt(3, lavarropa.getConsumoEnergetico().getId());
         	statement.setDouble(4, lavarropa.getPrecio_base());
         	statement.setDouble(5, lavarropa.getPeso());
         	statement.setDouble(6, lavarropa.getCarga());
@@ -190,10 +194,10 @@ public class LavarropasAdapter{
         {
         	Connection conn = DataConnectionManager.getInstancia().getConn();
         	statement = conn.prepareStatement("INSERT INTO electrodomesticos(descripcion,id_color,id_consumo,precio_base,peso,carga) "
-        									+ "values(?,(SELECT id_color FROM colores WHERE nombre_color=?), (SELECT id_consumos FROM consumosenergeticos WHERE nombre=?),?,?,?) ", Statement.RETURN_GENERATED_KEYS);
+        									+ "values(?,?,?,?,?,?) ", Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, lavarropa.getDescripcion());
-			statement.setString(2, lavarropa.getColor());
-			statement.setString(3, String.valueOf(lavarropa.getConsumoEnergetico()));
+			statement.setInt(2, lavarropa.getColor().getId());
+			statement.setInt(3, lavarropa.getConsumoEnergetico().getId());
 			statement.setDouble(4, lavarropa.getPrecio_base());
 			statement.setDouble(5, lavarropa.getPeso());
 			statement.setDouble(6, lavarropa.getCarga());

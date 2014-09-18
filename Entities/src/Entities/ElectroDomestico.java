@@ -4,15 +4,15 @@ import java.lang.String;
 public class ElectroDomestico extends Entity {
 	
 	// Constants
-	static final double defaultPeso=5;
-	static final String defaultColor = "blanco";
-	static final char defaultConsumo = 'F';
+	static final double defaultPeso=5.0;
+	static final Color defaultColor = new Color();
+	static final ConsumoEnergetico defaultConsumo = new ConsumoEnergetico();
 	static final double defaultPrecio = 100.0;	
 	
 	// Instance Variables	
 	protected double precio_base ; 
-	protected String color ;
-	protected char consumoEnergetico ;
+	protected Color color ;
+	protected ConsumoEnergetico consumoEnergetico ;
 	protected double peso; // en kg
 	protected String descripcion;
 	
@@ -23,16 +23,16 @@ public class ElectroDomestico extends Entity {
 	public void setPrecio_base(double precio_base) {
 		this.precio_base = precio_base;
 	}
-	public String getColor() {
+	public Color getColor() {
 		return color;
 	}
-	public void setColor(String color) {	
+	public void setColor(Color color) {	
 		this.color = color;
 	}
-	public char getConsumoEnergetico() {
+	public ConsumoEnergetico getConsumoEnergetico() {
 		return consumoEnergetico;
 	}
-	public void setConsumoEnergetico(char consumoEnergetico){
+	public void setConsumoEnergetico(ConsumoEnergetico consumoEnergetico){
 		this.consumoEnergetico = consumoEnergetico; 
 	}
 	public double getPeso() {
@@ -47,7 +47,7 @@ public class ElectroDomestico extends Entity {
 	public String getDescripcion(){
 		return this.descripcion;
 	}
-	/** ElectroDomestico(String descripcion, double precioBase, double peso, char idConsumoEnergetico, String color) */
+	/** ElectroDomestico(String descripcion, double precioBase, double peso, ConsumoEnergetico idConsumoEnergetico, Colorcolor) */
 	public ElectroDomestico(){
 		super();
 		this.setDescripcion("");
@@ -56,7 +56,7 @@ public class ElectroDomestico extends Entity {
 		this.setConsumoEnergetico(ElectroDomestico.defaultConsumo);
 		this.setPeso(ElectroDomestico.defaultPeso);
 	}
-	/** ElectroDomestico(String descripcion, double precioBase, double peso, char idConsumoEnergetico, String color) */
+	/** ElectroDomestico(String descripcion, double precioBase, double peso, ConsumoEnergetico idConsumoEnergetico, Color color) */
 	public ElectroDomestico(double precio,double peso){
 		super();
 		this.setPrecio_base(precio);
@@ -64,8 +64,8 @@ public class ElectroDomestico extends Entity {
 		this.setConsumoEnergetico(ElectroDomestico.defaultConsumo);
 		this.setColor(ElectroDomestico.defaultColor);
 	}
-	/** ElectroDomestico(String descripcion, double precioBase, double peso, char idConsumoEnergetico, String color) */
-	public ElectroDomestico(String descripcion,double precio, double peso, char consumoEnergetico, String color)
+	/** ElectroDomestico(String descripcion, double precioBase, double peso, ConsumoEnergetico idConsumoEnergetico, Color color) */
+	public ElectroDomestico(String descripcion,double precio, double peso, ConsumoEnergetico consumoEnergetico, Color color)
 	{
 		super();
 		this.setDescripcion(descripcion);
