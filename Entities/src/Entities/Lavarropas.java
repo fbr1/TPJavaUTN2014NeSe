@@ -32,7 +32,7 @@ public class Lavarropas extends ElectroDomestico{
 		super(descripcion, precio, peso, consumoEnergetico, color);		
 		this.setCarga(carga);
 	}
-	public double precioFinal(PesoPrecio pesoprecio){
+	public double PrecioFinal(PesoPrecio pesoprecio){
 		double precioFinal = super.PrecioFinal(pesoprecio);
 		if(this.getCarga() > Lavarropas.MIN_CARGA ) { precioFinal += Lavarropas.RECARGO_CARGA ;}
 		return precioFinal;

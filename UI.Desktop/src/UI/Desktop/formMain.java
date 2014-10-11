@@ -65,7 +65,7 @@ public class formMain{
 	 */
 	private void initialize() {
 		
-		electroDomesticos = new ElectroDomesticoLogic();
+		electroDomesticos = new ElectroDomesticoLogic();		
 		
 		// Create frame
 		
