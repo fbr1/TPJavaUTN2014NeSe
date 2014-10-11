@@ -26,7 +26,6 @@ import Business.ElectroDomesticoLogic;
 import Business.LavarropasLogic;
 import Business.TelevisionLogic;
 import Entities.ElectroDomestico;
-import Entities.Lavarropas;
 import Entities.Television;
 
 public class formMain{
@@ -34,7 +33,7 @@ public class formMain{
 	public enum TipoOperacion{alta,modificacion};
 	
 	private JFrame frame;
-	private TableModel model;
+	private TableModelElecDom model;
 	private JTable table;
 	private ElectroDomesticoLogic electroDomesticos;
 
@@ -85,7 +84,11 @@ public class formMain{
 		
 		// Create Model
 		
-		model = new TableModel(generateTableInput());
+		try {
+			model = new TableModelElecDom(generateTableInput());
+		} catch (Exception e1) {			
+			JOptionPane.showMessageDialog(null, "Error al generar datasource tabla. " + e1.getMessage() , "Error", JOptionPane.ERROR_MESSAGE);
+		}		
 		
 		// Create Table
 		
@@ -102,7 +105,7 @@ public class formMain{
 		    		if( table.getSelectedRow() != -1 && e.getFirstIndex() < table.getRowCount() && e.getLastIndex() < table.getRowCount()){
 		    			// Setea todo los checkbox a falso menos el seleccionado
 				    	int index = e.getFirstIndex();
-				    	TableModel model = (TableModel) table.getModel();
+				    	TableModelElecDom model = (TableModelElecDom) table.getModel();
 				    	model.setValueAt(Boolean.FALSE, index, 0);
 				    	index = e.getLastIndex();
 				    	model.setValueAt(Boolean.FALSE, index, 0);		
@@ -171,60 +174,21 @@ public class formMain{
 		menuBar.add(mnAyuda);
 		
 		JMenuItem mntmAcercaDe = new JMenuItem("Acerca de");
-		mnAyuda.add(mntmAcercaDe);
+		mnAyuda.add(mntmAcercaDe);		
 	}
 	
-	private ArrayList<Object[]> generateTableInput(ArrayList<ElectroDomestico> elecDom) throws Exception{	
+	private ArrayList<ElectroDomestico> generateTableInput(ArrayList<ElectroDomestico> elecDom) throws Exception{	
 		
 		/*
 		 * El Alternativo a esta linea en java 7 es Collections.sort(elecDom, new CustomComparator());
 		 */
 		Collections.sort(elecDom, (e1, e2) -> e1.getDescripcion().compareToIgnoreCase(e2.getDescripcion()));
-		
-		ArrayList<Object[]> data = new ArrayList<Object[]>();
-		for(ElectroDomestico la : elecDom){
-			if(la instanceof Lavarropas){
-				Object[] obj = convertLavarropasToObject(la);
-				data.add(obj);
-			}else if (la instanceof Television){
-				Object[] obj = convertTelevisionToObject(la);
-				data.add(obj);
-			}
-		}
-		
-		return data;
+		return elecDom;
 	}
 	
-	private ArrayList<Object[]> generateTableInput(){	
-		ArrayList<Object[]> object = null;
-		try {
-			object = generateTableInput(electroDomesticos.getAll());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
-		return object;
-	}
-	
-	private Object[] convertTelevisionToObject(ElectroDomestico tes) throws Exception{
-		
-		Television te = (Television)tes;
-		
-		Object[] obj = { false, te.getId(), te.getDescripcion(), te.getColor(),
-				 te.getConsumoEnergetico(), te.getPeso(),
-				 te.getPrecio_base(), null, te.getResolucion(), te.tieneSinTDT(), new TelevisionLogic().precioFinal(te.getId())};
-		return obj;
-	}
-	
-	private Object[] convertLavarropasToObject(ElectroDomestico las) throws Exception{
-		
-		Lavarropas la = (Lavarropas)las;
-		
-		Object[] obj = { false, la.getId(), la.getDescripcion(), la.getColor(),
-				 la.getConsumoEnergetico(), la.getPeso(),
-				 la.getPrecio_base(), la.getCarga(), null, null,new LavarropasLogic().precioFinal(la.getId())};
-		return obj;
-	}
+	private ArrayList<ElectroDomestico> generateTableInput() throws Exception{		
+		return generateTableInput(electroDomesticos.getAll());
+	}	
 	
 	private void Nuevo(){
 		
@@ -247,7 +211,7 @@ public class formMain{
 		}else{
 			ElectroDomestico elecDom=null;
 			try {
-				elecDom = new ElectroDomesticoLogic().getOne((int)table.getValueAt(table.getSelectedRow(), 1));
+				elecDom = ((TableModelElecDom)table.getModel()).getElecDomAt(table.getSelectedRow());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -271,20 +235,20 @@ public class formMain{
 			JOptionPane.showMessageDialog(null, "Seleccione un electrodomestico a eliminar", "Error", JOptionPane.ERROR_MESSAGE);
 		}else{
 			try {
-				ElectroDomestico elecDom = new ElectroDomesticoLogic().getOne((int)table.getValueAt(table.getSelectedRow(), 1));
+				ElectroDomestico elecDom = ((TableModelElecDom)table.getModel()).getElecDomAt(table.getSelectedRow());
 				int dialogResult = JOptionPane.showConfirmDialog (null, "Realmente desea borrar el electrodomestico?","Warning", JOptionPane.YES_NO_OPTION);
 				if(dialogResult == JOptionPane.YES_OPTION){
 					if(elecDom instanceof Television){
-						new TelevisionLogic().delete((int)table.getValueAt(table.getSelectedRow(), 1));
+						new TelevisionLogic().delete(elecDom.getId());
 					}else{
-						new LavarropasLogic().delete((int)table.getValueAt(table.getSelectedRow(), 1));
+						new LavarropasLogic().delete(elecDom.getId());
 					}
 				}
 			} catch (Exception e) {
-				JOptionPane.showMessageDialog(null, "Error al borrar el electrodomestico", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Error al borrar el electrodomestico" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
-		TableModel model = (TableModel) table.getModel();
+		TableModelElecDom model = (TableModelElecDom) table.getModel();
 		model.clearChecks();
 		UpdateTable();
 	}
@@ -305,7 +269,7 @@ public class formMain{
 	
 	private void UpdateTable(ArrayList<ElectroDomestico> elecDoms){
 	     try {
-			table.setModel(new TableModel(this.generateTableInput(elecDoms)));
+			table.setModel(new TableModelElecDom(this.generateTableInput(elecDoms)));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -34,4 +34,12 @@ public class Color extends Entity{
 		String nombre = Character.toUpperCase(this.nombre.charAt(0)) + this.nombre.substring(1);
 		return nombre;
 	}
+	public boolean equals(Color color){
+		if(this.getNombre().equalsIgnoreCase(color.getNombre())){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
 }

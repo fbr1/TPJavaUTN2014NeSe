@@ -6,9 +6,6 @@ import Entities.ElectroDomestico;
 import Entities.Lavarropas;
 
 public class LavarropasLogic extends ElectroDomesticoLogic{	
-	//Constants
-	static final double MIN_CARGA = 30; 
-	static final double RECARGO_CARGA = 50;
 	
 	private LavarropasAdapter lavarropasData;
 	
@@ -37,15 +34,6 @@ public class LavarropasLogic extends ElectroDomesticoLogic{
 		LavarropasData().delete(id);
 	}	
 	 
-	public double precioFinal(int ID) throws Exception{
-		double precioFinal = super.precioFinal(ID);
-		if(this.getOne(ID).getCarga() > LavarropasLogic.MIN_CARGA ) { precioFinal += LavarropasLogic.RECARGO_CARGA ;}
-		return precioFinal;
-	}
-	
-	public double precioFinal(Lavarropas lavarropa) throws Exception{
-		return this.precioFinal(lavarropa.getId());
-	}
 }
 
 

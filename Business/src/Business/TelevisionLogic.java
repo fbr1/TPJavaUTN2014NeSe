@@ -8,10 +8,6 @@ import Entities.Television;
 
 
 public class TelevisionLogic extends ElectroDomesticoLogic{	
-	//Constants
-	static final double MIN_PULGADAS = 40;
-	static final double PORCENTAJE_PULGADAS_RECARGO = 30;
-	static final double RECARGO_TDT = 50;
 	
 	private TelevisionAdapter televisionData;
 	
@@ -40,23 +36,5 @@ public class TelevisionLogic extends ElectroDomesticoLogic{
 		TelevisionData().delete(id);
 	}	
 	
-	public double precioFinal(int ID) throws Exception{
-		double precioFinal = super.precioFinal(ID);
-		Television television = this.getOne(ID);
-		if(television.getResolucion() > TelevisionLogic.MIN_PULGADAS){
-			precioFinal += precioFinal * TelevisionLogic.PORCENTAJE_PULGADAS_RECARGO / 100; 
-		}
-		if(television.tieneSinTDT()){
-			precioFinal += TelevisionLogic.RECARGO_TDT;
-		}
-		return precioFinal;
-	}
-	
-	public double precioFinal(Television television) throws Exception{
-		return this.precioFinal(television.getId());
-	}
-	
-	
-
 }
 

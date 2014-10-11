@@ -74,6 +74,17 @@ public class ElectroDomestico extends Entity {
 		this.setConsumoEnergetico(consumoEnergetico);
 		this.setColor(color);
 		
-	}	
+	}
+	public double PrecioFinal(PesoPrecio pesoprecio){
+		double precioFinal = this.getPrecio_base();
+		
+		// Consumos
+		precioFinal += this.getConsumoEnergetico().getPrecio();
+		
+		//Peso Precio		
+		precioFinal += pesoprecio.getPrecio();
+		
+		return precioFinal;
+	}
 	
 }

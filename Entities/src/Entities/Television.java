@@ -5,7 +5,10 @@ public class Television extends ElectroDomestico{
 	// Constants
 	static final double defaultResolucion = 20.0;
 	static final boolean defaultSinTDT = false;
-	static final int PORCENTAJE_RECARGO = 30;
+	
+	static final double MIN_PULGADAS = 40;
+	static final double PORCENTAJE_PULGADAS_RECARGO = 30;
+	static final double RECARGO_TDT = 50;
 	
 	//Get & Set
 	public double getResolucion() {
@@ -49,7 +52,17 @@ public class Television extends ElectroDomestico{
 		this.setResolucion(resolucion);
 		this.setSinTDT(sinTDT);		
 	}
-
+	public double precioFinal(PesoPrecio pesoprecio){
+		double precioFinal = super.PrecioFinal(pesoprecio);
+		if(this.getResolucion() > Television.MIN_PULGADAS){
+			precioFinal += precioFinal * Television.PORCENTAJE_PULGADAS_RECARGO / 100; 
+		}
+		if(this.tieneSinTDT()){
+			precioFinal += Television.RECARGO_TDT;
+		}
+		System.out.println("paso por la television viste");
+		return precioFinal;
+	}
 
 
 	

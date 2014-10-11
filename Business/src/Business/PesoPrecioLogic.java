@@ -38,7 +38,7 @@ public class PesoPrecioLogic {
 	public void delete(int id) throws Exception{
 		PesoPrecioData().delete(id);
 	}
-	public double getPrecioForPeso(double peso) throws Exception{
-		return PesoPrecioData().getOneByPeso(peso).getPrecio();
+	public PesoPrecio getOneByPeso(double peso) throws Exception{
+		return PesoPrecioData().getOneByPeso(peso);
 	}
 }

@@ -9,6 +9,7 @@ import Entities.ElectroDomestico;
 import Entities.Color;
 import Entities.Lavarropas;
 import Entities.Entity.States;
+import Entities.PesoPrecio;
 import Entities.Television;
 
 public class ElectroDomesticoLogic extends BusinessLogic{	
@@ -97,21 +98,15 @@ public class ElectroDomesticoLogic extends BusinessLogic{
 	}
 
 
-	public double precioFinal(int ID) throws Exception{
-		ElectroDomestico elecDom = this.getOne(ID);
-		double precioFinal = elecDom.getPrecio_base();
-
-		// Consumos
-		precioFinal += elecDom.getConsumoEnergetico().getPrecio();
-		
-		//Peso Precio
-		PesoPrecioLogic pesosPrecios = new PesoPrecioLogic();	
-		precioFinal += pesosPrecios.getPrecioForPeso(elecDom.getPeso());
-
-		return precioFinal;
+	public double precioFinal(int ID) throws Exception{		
+		ElectroDomestico elecDom = this.getOne(ID);		
+		return this.precioFinal(elecDom);
 	}
+	
 	public double precioFinal(ElectroDomestico elecDom) throws Exception{
-		return this.precioFinal(elecDom.getId());
+		PesoPrecioLogic pesosPrecios = new PesoPrecioLogic();	
+		PesoPrecio pesoprecio = pesosPrecios.getOneByPeso(elecDom.getPeso());
+		return elecDom.PrecioFinal(pesoprecio);
 	}
 
 

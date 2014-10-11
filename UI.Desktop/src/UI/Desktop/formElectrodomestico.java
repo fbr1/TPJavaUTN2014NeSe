@@ -25,6 +25,7 @@ import Business.ConsumoEnergeticoLogic;
 import Business.LavarropasLogic;
 import Business.TelevisionLogic;
 import UI.Desktop.formMain.TipoOperacion;
+import Entities.ConsumoEnergetico;
 import Entities.ElectroDomestico;
 import Entities.Lavarropas;
 import Entities.Television;
@@ -35,6 +36,8 @@ import javax.swing.SwingConstants;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Collections;
 
 
 
@@ -95,15 +98,22 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
 	}
 	// Constructor Form de creacion
 	public formElectrodomestico() {
+		
 		setModal(true);
 		setResizable(false);
 		setTitle("Nuevo Electrodomestico");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		
+		// Pone la ventana en el centro de la pantalla
+		
 	    Point center = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
 	    int windowWidth = 312;
 	    int windowHeight = 284;
 	    setBounds(center.x - windowWidth / 2, center.y - windowHeight / 2, windowWidth,
-	        windowHeight);
+	        windowHeight);	    
+	    
+	    // 	    
+	 
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -115,7 +125,8 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
 		setTipoOperacion(formMain.TipoOperacion.modificacion);
 		setElectroDomestico(elecDom);
 		setTitle("Modificar Electrodomestico");
-		CardLayout cardLayout = (CardLayout) cards.getLayout();
+		CardLayout cardLayout = (CardLayout) cards.getLayout();		
+
 		if(electrodomestico instanceof Television){
 			cardLayout.show(cards, "Television");
         	cbNuevoElectroDomestico.setSelectedIndex(1);
@@ -123,7 +134,8 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
 		}else{
 			cardLayout.show(cards, "Lavarropas");
         	cbNuevoElectroDomestico.setSelectedIndex(2);
-		}
+		}		
+		
 		cbNuevoElectroDomestico.setEnabled(false);   
 		this.populateFields(elecDom);
 	}
@@ -237,36 +249,56 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
 		lblColor.setBounds(10, 89, 44, 14);
 		electroDomesticoPanel.add(lblColor);
 		
-		DefaultComboBoxModel<Entities.Color> model = new DefaultComboBoxModel<Entities.Color>();
+		// ComboBox colores
+		
+		ArrayList<Entities.Color> colores= null;
 		try {
-			for(Entities.Color col : new ColorLogic().getAll()){
-				model.addElement(col);
+			colores = new ColorLogic().getAll();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		DefaultComboBoxModel<Entities.Color> model = new DefaultComboBoxModel<Entities.Color>();
+		Entities.Color coldef= null;
+		for(Entities.Color col : colores){
+			model.addElement(col);
+			if(col.equals(new Entities.Color())){
+				coldef = col;
 			}
+		}
+		cbbColor = new JComboBox<Entities.Color>(model);
+		cbbColor.setBounds(152, 86, 79, 20);
+		//cbbColor.setSelectedIndex(0);
+		cbbColor.setSelectedItem(coldef);		
+		electroDomesticoPanel.add(cbbColor);
+		
+		// ComboBox Consumos
+		
+		ArrayList<ConsumoEnergetico> consumos=null;
+		try {
+			consumos = new ConsumoEnergeticoLogic().getAll();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		cbbColor = new JComboBox<Entities.Color>(model);
-		cbbColor.setBounds(152, 86, 79, 20);
-		cbbColor.setSelectedIndex(0);
-		electroDomesticoPanel.add(cbbColor);
 		
 		JLabel lblConsumoEnergetico = new JLabel("Consumo Energetico:");
 		lblConsumoEnergetico.setBounds(10, 114, 132, 14);
 		electroDomesticoPanel.add(lblConsumoEnergetico);			
 		
 		DefaultComboBoxModel<Entities.ConsumoEnergetico> model2 = new DefaultComboBoxModel<Entities.ConsumoEnergetico>();
-		try {
-			for(Entities.ConsumoEnergetico consu : new ConsumoEnergeticoLogic().getAll()){
-				model2.addElement(consu);
+		ConsumoEnergetico defcon = null; // :D
+		for(Entities.ConsumoEnergetico consu : consumos){
+			model2.addElement(consu);
+			if(consu.equals(new ConsumoEnergetico())){
+				defcon = consu;
 			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		cbbConsumo = new JComboBox<Entities.ConsumoEnergetico>(model2);
 		cbbConsumo.setBounds(152, 111, 44, 20);
-		cbbConsumo.setSelectedIndex(5);
+		//cbbConsumo.setSelectedIndex(5);
+		cbbConsumo.setSelectedItem(defcon);
 		electroDomesticoPanel.add(cbbConsumo);				
 		
 		JLabel lblPeso = new JLabel("Peso:");
@@ -331,8 +363,7 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
 					try {
 						lavarropasLogic.save(lavarropa);
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
 					}	
 					this.setResultado(resultado.Completado);
 					this.dispose();
@@ -357,8 +388,7 @@ public class formElectrodomestico extends defaultDialog implements ItemListener 
 					try {
 						televisionLogic.save(television);
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
 					}	    
 					this.setResultado(resultado.Completado);
 					this.dispose();

@@ -51,4 +51,11 @@ public class ConsumoEnergetico extends Entity{
 		public String toString(){		
 			return String.valueOf(this.getNombre());		
 		}
+		public boolean equals(ConsumoEnergetico consumo){
+			if(Character.compare(this.getNombre(), consumo.getNombre()) == 0){
+				return true;
+			}else{
+				return false;
+			}
+		}
 }
