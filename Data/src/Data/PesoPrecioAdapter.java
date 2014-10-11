@@ -91,6 +91,46 @@ public class PesoPrecioAdapter{
         }
         return pesoPrecio;
     }
+    public PesoPrecio getOneByPeso(double peso) throws Exception
+    {    	
+        PesoPrecio pesoPrecio = null;
+        PreparedStatement statement=null;
+        ResultSet rs=null;
+        
+        try
+        {
+        	Connection conn = DataConnectionManager.getInstancia().getConn();
+        	statement = conn.prepareStatement("SELECT id_pesoprecios, peso_min, peso_max, precio FROM pesoprecios WHERE ?>peso_min AND ?<peso_max");
+        	statement.setDouble(1,peso);
+        	statement.setDouble(2, peso);
+        	rs = statement.executeQuery();     	
+        	
+        	if(rs.next()){
+        		pesoPrecio = new PesoPrecio();
+            	pesoPrecio.setId(rs.getInt("id_pesoprecios"));
+            	pesoPrecio.setPeso_min(rs.getDouble("peso_min"));
+            	pesoPrecio.setPeso_max(rs.getDouble("peso_max"));
+            	pesoPrecio.setPrecio(rs.getDouble("precio"));        		
+        	}
+
+        }
+        catch (Exception Ex)
+        {                
+            throw new Exception("Error al recuperar el pesoPrecio", Ex);
+        }
+        finally
+        {
+        	try{
+        		if(rs!=null){rs.close();}
+        		if(statement!=null && !statement.isClosed()){statement.close();}
+        		DataConnectionManager.getInstancia().CloseConn();
+        	}
+        	catch (SQLException sqle){
+        		sqle.printStackTrace();
+        	}
+        }
+        return pesoPrecio;
+    }
 
     public void delete(int ID) throws Exception
     {

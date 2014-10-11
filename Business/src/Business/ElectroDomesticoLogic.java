@@ -8,7 +8,6 @@ import Entities.ConsumoEnergetico;
 import Entities.ElectroDomestico;
 import Entities.Color;
 import Entities.Lavarropas;
-import Entities.PesoPrecio;
 import Entities.Entity.States;
 import Entities.Television;
 
@@ -44,7 +43,7 @@ public class ElectroDomesticoLogic extends BusinessLogic{
 		ArrayList<ElectroDomestico> electrodomesticos = new ArrayList<ElectroDomestico>();
 		for(ElectroDomestico elecDom : ElectroDomesticoData().getAll()){
 			double preciofinal = 0;
-			if(elecDom instanceof Television){     // TODO no se si esta bien implementado con respecto a la orientacion a objetos
+			if(elecDom instanceof Television){     
 				preciofinal = new TelevisionLogic().precioFinal((Television)elecDom);
 			}else if(elecDom instanceof Lavarropas){
 				preciofinal = new LavarropasLogic().precioFinal((Lavarropas)elecDom);
@@ -102,21 +101,13 @@ public class ElectroDomesticoLogic extends BusinessLogic{
 		ElectroDomestico elecDom = this.getOne(ID);
 		double precioFinal = elecDom.getPrecio_base();
 
-		//Consumos
-		ConsumoEnergeticoLogic consumos = new ConsumoEnergeticoLogic();
-		ConsumoEnergetico consumo= new ConsumoEnergetico();
-		consumo = consumos.getOneByNombre(elecDom.getConsumoEnergetico().getNombre());
-		precioFinal += consumo.getPrecio();
+		// Consumos
+		precioFinal += elecDom.getConsumoEnergetico().getPrecio();
 		
 		//Peso Precio
 		PesoPrecioLogic pesosPrecios = new PesoPrecioLogic();	
-		double pesoElecDom = elecDom.getPeso();
-		for (PesoPrecio pp : pesosPrecios.getAll()){
-			if(pesoElecDom >= pp.getPeso_min() && pesoElecDom <= pp.getPeso_max()){
-				precioFinal += pp.getPrecio();
-				break;
-			}
-		}
+		precioFinal += pesosPrecios.getPrecioForPeso(elecDom.getPeso());
+
 		return precioFinal;
 	}
 	public double precioFinal(ElectroDomestico elecDom) throws Exception{
