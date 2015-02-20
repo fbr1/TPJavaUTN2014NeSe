@@ -33,10 +33,18 @@ public class Listing extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {	
 		ArrayList<ElectroDomestico> elecDoms = null;
 		try {
-			elecDoms = new ElectroDomesticoLogic().getAll();
+			elecDoms = new ElectroDomesticoLogic().getAll();			
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+		}
+		for(ElectroDomestico elecdom : elecDoms){
+			try {
+				elecdom.setPrecioFinal(new ElectroDomesticoLogic().precioFinal(elecdom.getId()));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		request.setAttribute("elecDoms", elecDoms);
 

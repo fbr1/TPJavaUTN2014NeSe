@@ -15,6 +15,7 @@ public class ElectroDomestico extends Entity {
 	protected ConsumoEnergetico consumoEnergetico ;
 	protected double peso; // en kg
 	protected String descripcion;
+	protected double precioFinal;
 	
 	// Instance Methods
 	public double getPrecio_base() {
@@ -46,6 +47,12 @@ public class ElectroDomestico extends Entity {
 	}
 	public String getDescripcion(){
 		return this.descripcion;
+	}
+	public void setPrecioFinal(double precioFinal){
+		this.precioFinal = precioFinal;
+	}
+	public double getPrecioFinal(){
+		return this.precioFinal;
 	}
 	/** ElectroDomestico(String descripcion, double precioBase, double peso, ConsumoEnergetico idConsumoEnergetico, Colorcolor) */
 	public ElectroDomestico(){
