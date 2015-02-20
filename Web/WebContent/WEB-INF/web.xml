@@ -10,7 +10,7 @@
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
   <servlet>
-	<servlet-name>ElecDomListing</servlet-name>
-	<servlet-class>ElecDomListing.Listing</servlet-class>
-	</servlet>
+    <servlet-name>ElecDomListing</servlet-name>
+    <servlet-class>ElecDomListing.Listing</servlet-class>
+  </servlet>
 </web-app>
