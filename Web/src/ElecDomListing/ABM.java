@@ -155,7 +155,7 @@ public class ABM extends HttpServlet {
 					error=e.getMessage();
 				}
 				if(!error.isEmpty()){									
-					primerRequest(confirmacion,Integer.parseInt(request.getParameter("id")),request,response,error);											
+					primerRequest(confirmacion,Integer.parseInt(request.getParameter("id").equals("") ? "0" : request.getParameter("id"))  ,request,response,error);											
 				}else{
 					response.sendRedirect("/Web/Listing");						
 				}				
