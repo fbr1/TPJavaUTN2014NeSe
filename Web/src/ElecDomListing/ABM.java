@@ -48,7 +48,7 @@ public class ABM extends HttpServlet {
 			tiene_id=false;
 		}	
 		if(action != null){
-			if (action.equalsIgnoreCase("nuevo") && tiene_id==false){
+			if ((action.equalsIgnoreCase("modificar") || action.equalsIgnoreCase("eliminar") ) && tiene_id==false){
 				response.sendRedirect("/Web/Listing");
 			}else{
 				primerRequest(action,ID,request,response);
