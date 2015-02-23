@@ -28,7 +28,7 @@ public class TelevisionLogic extends ElectroDomesticoLogic{
 	}
 	
 	public void save(Television television) throws Exception{
-		super.validateInput((ElectroDomestico)television);
+		super.validateInput((ElectroDomestico)television);		
 		TelevisionData().save(television);
 	}		
 

@@ -2,7 +2,10 @@ body{
 	margin:0 auto;
 	width:1024px;
 }
-
+#error{
+	background-color: red;
+	color: white;
+}
 
 table a:link {
 	color: #666;

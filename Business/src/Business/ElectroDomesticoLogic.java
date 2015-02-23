@@ -94,6 +94,10 @@ public class ElectroDomesticoLogic extends BusinessLogic{
 			}
 
 			if(!correcto){ elecDom.setConsumoEnergetico(new ConsumoEnergetico());}	
+			
+			if(elecDom.getDescripcion().isEmpty()){
+				throw new Exception("La descripcion esta vacia");
+			}			
 		}
 	}
 

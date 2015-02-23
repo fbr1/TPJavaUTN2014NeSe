@@ -93,5 +93,5 @@ public class ElectroDomestico extends Entity {
 		
 		return precioFinal;
 	}
-	
+
 }

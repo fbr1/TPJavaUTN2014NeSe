@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import Business.ElectroDomesticoLogic;
 import Entities.ElectroDomestico;
@@ -30,24 +31,22 @@ public class Listing extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {			
+		String error = "";
 		ArrayList<ElectroDomestico> elecDoms = null;
 		try {
-			elecDoms = new ElectroDomesticoLogic().getAll();			
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		for(ElectroDomestico elecdom : elecDoms){
-			try {
-				elecdom.setPrecioFinal(new ElectroDomesticoLogic().precioFinal(elecdom.getId()));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			elecDoms = new ElectroDomesticoLogic().getAll();	
+			for(ElectroDomestico elecdom : elecDoms){		
+				elecdom.setPrecioFinal(new ElectroDomesticoLogic().precioFinal(elecdom.getId()));			
 			}
+		} catch (Exception e1) {
+			error = e1.getMessage();
+		}
+		if(!error.isEmpty()){
+			request.setAttribute("error", error);	
 		}
 		request.setAttribute("elecDoms", elecDoms);
-
+		
 		getServletContext().getRequestDispatcher("/listado.jsp").forward(request, response);
 	}
 
